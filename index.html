@@ -1,25 +1,100 @@
-<!DOCTYPE html>
-<html ng-app="expandedHandsontable">
+<!doctype html>
+<html ng-app="ngHandsontableDemo">
 <head>
-    <title>expanded ngHandsonTable Directive</title>
-    <meta charset="utf-8"/>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <script src="vendor/angular.min.js"></script>
-    <script src="vendor/angular-route.min.js"></script>
-    <script src="vendor/angular-animate.min.js"></script>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="vendor/jquery-2.0.3.js"></script>
+	<meta charset='utf-8'>
+	<title>ngHandsontable.Angular version of Handontable library</title>
+
+	<!--
+	Loading Handsontable (full distribution that includes all dependencies apart from jQuery)
+	-->
+	<link data-jsfiddle="common" rel="stylesheet" media="screen" href="bower_components/handsontable/dist/handsontable.full.css">
+	<script data-jsfiddle="common" src="bower_components/angular/angular.js"></script>
+	<script data-jsfiddle="common" src="bower_components/handsontable/dist/handsontable.full.js"></script>
+  <script data-jsfiddle="common" src="dist/ngHandsontable.js"></script>
+  <script data-jsfiddle="common" src="demo/js/ngHandsontableDemo.js"></script>
+
+	<!--
+	Loading demo dependencies. They are used here only to enhance the examples on this page
+	-->
+	<link data-jsfiddle="common" rel="stylesheet" media="screen" href="demo/css/samples.css">
+	<script src="demo/js/samples.js"></script>
+	<script src="demo/js/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" media="screen" href="demo/js/highlight/styles/github.css">
+	<link rel="stylesheet" href="demo/css/font-awesome/css/font-awesome.min.css">
 
 </head>
-<body>
-<div ng-view ng-controller="MainController">
 
+<body class="home" ng-controller="DemoCtrl">
+
+<div class="wrapper">
+<div class="wrapper-row">
+
+
+
+<div id="container">
+	<div class="columnLayout">
+
+		<div class="rowLayout">
+			<div class="descLayout">
+				<div class="pad" data-jsfiddle="example">
+
+          <h2>Static configuration with dynamic data</h2>
+
+          <p>
+            The main directive for ngHandsontable is <code>hot-table</code>
+          </p>
+
+          <p>
+            You can put all your settings in <code>settings="{colHeaders: colHeaders, <br>contextMenu: true }"</code>
+            attribute
+            or in separated attributes, e.g. <code>minSpareRows="minSpareRows"</code>, <code>rowHeaders="false"</code>.
+          </p>
+
+					<div id="example1">
+						<hot-table
+							settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }"
+							rowHeaders="false"
+							minSpareRows="minSpareRows"
+							datarows="db.items"
+							height="300"
+							width="700">
+							<hot-column data="id"                  title="'ID'"></hot-column>
+							<hot-column data="name.first"          title="'First Name'"  type="grayedOut"  readOnly></hot-column>
+							<hot-column data="name.last"           title="'Last Name'"   type="grayedOut"  readOnly></hot-column>
+							<hot-column data="address"             title="'Address'" width="150"></hot-column>
+							<hot-column data="product.description" title="'Favorite food'" type="'autocomplete'">
+								<hot-autocomplete datarows="description in product.options"></hot-autocomplete>
+							</hot-column>
+							<hot-column data="price"               title="'Price'"     type="'numeric'"  width="80"  format="'$ 0,0.00'" ></hot-column>
+							<hot-column data="isActive"            title="'Is active'" type="'checkbox'" width="65"  checkedTemplate="'Yes'" uncheckedTemplate="'No'"></hot-column>
+						</hot-table>
+					</div>
+
+          <h2>Dynamic configuration with dynamic data</h2>
+
+          <p>This example uses a dynamic <code>columns</code> configuration that changes every 3 seconds!</p>
+
+          <p>It is bound to the same data source as the first instance on this page.</p>
+
+					<div id="example2">
+						<hot-table settings="{rowHeaders: false, contextMenu: true, afterChange: afterChange}" colHeaders="true" datarows="db.items" columns="db.dynamicColumns" height="300" width="700"></hot-table>
+					</div>
+
+          <h2>Data binding</h2>
+
+          <p>The below <code>input</code> field is bound to the <code>address</code> property of the first data row.</p>
+
+					<label>Address <input type="text" ng-model="db.items[0].address" style="width: 300px"></label>
+				</div>
+			</div>
+		</div>
+
+	</div>
 </div>
 
-<script src="js/app.js"></script>
-<script src="js/services.js"></script>
-<script src="js/controller.js"></script> 
-<script src="js/view.js"></script>
+</div>
+</div>
+
 
 </body>
 </html>
