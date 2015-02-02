@@ -1,5 +1,5 @@
 # expanded-ngHandsonTableDirective
-expanded version of: http://handsontable.github.io/ngHandsontable/
+expanded version of: http://handsontable.github.io/ngHandsontable/ - A custom json structure Editor (supporting arrays, plain objects and simple values)expanded version of: http://handsontable.github.io/ngHandsontable/ - A custom json structure Editor (supporting arrays, plain objects and simple values)
 
 
 # WORK IN PROGRESS
