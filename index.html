@@ -2,7 +2,7 @@
 <html ng-app="ngHandsontableDemo">
 <head>
 	<meta charset='utf-8'>
-	<title>ngHandsontable.Angular version of Handontable library</title>
+	<title>Expanded ngHandsontable - Editor for custom json Input</title>
 
 	<!--
 	Loading Handsontable (full distribution that includes all dependencies apart from jQuery)
@@ -11,6 +11,9 @@
 	<script data-jsfiddle="common" src="bower_components/angular/angular.js"></script>
 	<script data-jsfiddle="common" src="bower_components/handsontable/dist/handsontable.full.js"></script>
   <script data-jsfiddle="common" src="dist/ngHandsontable.js"></script>
+  <script data-jsfiddle="common" src="dist/lodash.js"></script>
+  <script data-jsfiddle="common" src="dist/jsonpath.js"></script>
+  <script type="text/javascript" src="vendor/jquery-2.0.3.js"></script>
   <script data-jsfiddle="common" src="demo/js/ngHandsontableDemo.js"></script>
 
 	<!--
@@ -25,6 +28,10 @@
 </head>
 
 <body class="home" ng-controller="DemoCtrl">
+
+<div class="breadcrumbsjson">
+
+</div>
 
 <div class="wrapper">
 <div class="wrapper-row">
