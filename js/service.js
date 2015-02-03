@@ -1,43 +1,43 @@
 expHandsonTable.factory('settingFactory', [ function () {
 
-			return {
+	return {
 
-				containerClassName: 'handsontable-container',
+		containerClassName: 'handsontable-container',
 
 				/***
 				 * Append handsontable container div and initialize handsontable instance inside element
 				 * @param element
 				 * @param htSettings
 				 */
-				initializeHandsontable: function (element, htSettings) {
-					var container = document.createElement('DIV');
-					container.className = this.containerClassName;
-					element[0].appendChild(container);
+				 initializeHandsontable: function (element, htSettings) {
+				 	var container = document.createElement('DIV');
+				 	container.className = this.containerClassName;
+				 	element[0].appendChild(container);
 
-					return new Handsontable(container, htSettings);
-				},
+				 	return new Handsontable(container, htSettings);
+				 },
 
 				/***
 				 * Set new settings to handsontable instance
 				 * @param instance
 				 * @param settings
 				 */
-				updateHandsontableSettings: function (instance, settings) {
-					if (instance){
-						instance.updateSettings(settings);
-					}
+				 updateHandsontableSettings: function (instance, settings) {
+				 	if (instance){
+				 		instance.updateSettings(settings);
+				 	}
 
-				},
+				 },
 
 				/***
 				 * Render handsontable instance inside element
 				 * @param instance
 				 */
-				renderHandsontable: function (instance) {
-					if (instance){
-						instance.render();
-					}
-				},
+				 renderHandsontable: function (instance) {
+				 	if (instance){
+				 		instance.render();
+				 	}
+				 },
 
 				/***
 				 *
@@ -45,79 +45,79 @@ expHandsonTable.factory('settingFactory', [ function () {
 				 * @param scopeOptions
 				 * @return {{}}
 				 */
-				setHandsontableSettingsFromScope: function (htOptions, scopeOptions) {
-					var i,
-						settings = {},
-						allOptions = angular.extend({}, scopeOptions);
+				 setHandsontableSettingsFromScope: function (htOptions, scopeOptions) {
+				 	var i,
+				 	settings = {},
+				 	allOptions = angular.extend({}, scopeOptions);
 
-					angular.extend(allOptions, scopeOptions.settings);
+				 	angular.extend(allOptions, scopeOptions.settings);
 
-					for (i in htOptions) {
-						if (htOptions.hasOwnProperty(i) && typeof allOptions[htOptions[i]] !== 'undefined') {
-							settings[htOptions[i]] = allOptions[htOptions[i]];
-						}
-					}
+				 	for (i in htOptions) {
+				 		if (htOptions.hasOwnProperty(i) && typeof allOptions[htOptions[i]] !== 'undefined') {
+				 			settings[htOptions[i]] = allOptions[htOptions[i]];
+				 		}
+				 	}
 
-					return settings;
-				},
+				 	return settings;
+				 },
 
 				/***
 				 *
 				 * @param options
 				 * @return {{datarows: String("="), settings: String("=")}}
 				 */
-				getScopeDefinition: function (options) {
-					var scopeDefinition = {
-						datarows: '=',
-						settings: '='
-					};
+				 getScopeDefinition: function (options) {
+				 	var scopeDefinition = {
+				 		datarows: '=',
+				 		settings: '='
+				 	};
 
-					for (var i = 0, length = options.length; i < length; i++) {
-						scopeDefinition[options[i]] = '=' + options[i].toLowerCase();
-					}
+				 	for (var i = 0, length = options.length; i < length; i++) {
+				 		scopeDefinition[options[i]] = '=' + options[i].toLowerCase();
+				 	}
 
-					return scopeDefinition;
-				}
-			};
-		}
-	]
-);
+				 	return scopeDefinition;
+				 }
+				};
+			}
+			]
+			);
 
 expHandsonTable.factory('autoCompleteFactory', [ function () {
-			return {
-				parseAutoComplete: function (instance, column, dataSet, propertyOnly) {
-					column.source = function (query, process) {
-						var	row = instance.getSelected()[0];
-						var source = [];
-						var data = dataSet[row];
-						if (data) {
-							var options = column.optionList;
-							if (options.object) {
-								if (angular.isArray(options.object)) {
-									source = options.object;
-								} else {
-									var objKeys = options.object.split('.')
-										, paramObject = data;
+	return {
+		parseAutoComplete: function (instance, column, dataSet, propertyOnly) {
+			column.source = function (query, process) {
+				var	row = instance.getSelected()[0];
+				var source = [];
+				var data = dataSet[row];
+				if (data) {
+					var options = column.optionList;
+					if (options.object) {
+						if (angular.isArray(options.object)) {
+							source = options.object;
+						} else {
+							var objKeys = options.object.split('.')
+							, paramObject = data;
 
-									while (objKeys.length > 0) {
-										var key = objKeys.shift();
-										paramObject = paramObject[key];
-									}
+							while (objKeys.length > 0) {
+								var key = objKeys.shift();
+								paramObject = paramObject[key];
+							}
 
-									if (propertyOnly) {
-										for (var i = 0, length = paramObject.length; i < length; i++) {
-											source.push(paramObject[i][options.property]);
-										}
-									} else {
-										source = paramObject;
-									}
+							if (propertyOnly) {
+								for (var i = 0, length = paramObject.length; i < length; i++) {
+									source.push(paramObject[i][options.property]);
 								}
-								process(source);
+							} else {
+								source = paramObject;
 							}
 						}
-					};
+						process(source);
+					}
 				}
 			};
 		}
-	]
+	};
+}
+]
 );
