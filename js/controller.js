@@ -1,11 +1,4 @@
-angular.module('ngHandsontableDemo',
-	[
-		'ngHandsontable'
-	])
-	.controller(
-		'DemoCtrl', [
-			'$scope',
-			function ($scope) {
+expHandsonTable.controller('DemoCtrl', ['$scope', function ($scope) {
 
 				var products = [
 					{
