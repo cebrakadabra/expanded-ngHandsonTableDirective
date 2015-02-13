@@ -1,5 +1,5 @@
 expHandsonTable.directive('hotTable', ['settingFactory','autoCompleteFactory','$rootScope','$parse', function (settingFactory, autoCompleteFactory, $rootScope, $parse) {
-	
+
 
 	var publicProperties = Object.keys(Handsontable.DefaultSettings.prototype),
 	publicHooks = Object.keys(Handsontable.PluginHooks.hooks),
@@ -104,17 +104,15 @@ expHandsonTable.directive('hotTable', ['settingFactory','autoCompleteFactory','$
 					 	}
 					 });
 					}
-				};
-			}
-			]
-			);
+	};
+}]);
 
 
 /***
  * Angular Handsontable directive for single column settings
  */
  expHandsonTable.directive('hotColumn', [ function () {
- 	
+
  	return {
  		restrict: 'E',
  		require:'^hotTable',
@@ -175,9 +173,7 @@ expHandsonTable.directive('hotTable', ['settingFactory','autoCompleteFactory','$
 						controllerInstance.setColumnSetting(scope.column);
 					}
 				};
-			}
-			]
-			);
+}]);
 
 
 

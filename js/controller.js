@@ -24,64 +24,125 @@ expHandsonTable.controller('DemoCtrl', ['$scope', function ($scope) {
 	var lastNames = ["Tired", "Johnson", "Moore", "Rocket", "Goodman", "Farewell", "Manson", "Bentley", "Kowalski", "Schmidt", "Tucker", "Fancy"];
 	var address = ["Turkey", "Japan", "Michigan", "Russia", "Greece", "France", "USA", "Germany", "Sweden", "Denmark", "Poland", "Belgium"];
 
-	$scope.minSpareRows = 1;
+	$scope.minSpareRows = 0;
 	$scope.colHeaders = true;
 
 	$scope.db = {};
 	$scope.db.items = [];
-	for (var i = 0; i < 10; i++) {
+	// for (var i = 0; i < 10; i++) {
+	// 	$scope.db.items.push(
+	// 	{
+	// 		id: i + 1,
+	// 		name: {
+	// 			first: firstNames[Math.floor(Math.random() * firstNames.length)],
+	// 			last: lastNames[Math.floor(Math.random() * lastNames.length)]
+	// 		},
+	// 		address: Math.floor(Math.random() * 100000) + ' ' + address[Math.floor(Math.random() * address.length)],
+	// 		price: Math.floor(Math.random() * 100000) / 100,
+	// 		isActive: Math.floor(Math.random() * products.length) / 2 == 0 ? 'Yes' : 'No',
+	// 		product: angular.extend({}, products[Math.floor(Math.random() * products.length)])
+	// 	}
+	// 	);
+	// }
+
+		for (var i = 0; i < 10; i++) {
 		$scope.db.items.push(
 		{
 			id: i + 1,
 			name: {
-				first: firstNames[Math.floor(Math.random() * firstNames.length)],
-				last: lastNames[Math.floor(Math.random() * lastNames.length)]
+				first: firstNames[i],
+				last: lastNames[i]
 			},
-			address: Math.floor(Math.random() * 100000) + ' ' + address[Math.floor(Math.random() * address.length)],
-			price: Math.floor(Math.random() * 100000) / 100,
-			isActive: Math.floor(Math.random() * products.length) / 2 == 0 ? 'Yes' : 'No',
+			address: address[i],
+			price: 23,
+			isActive: 'Yes',
 			product: angular.extend({}, products[Math.floor(Math.random() * products.length)])
 		}
 		);
 	}
 
-	$scope.db.dynamicColumns = [
-	{
-		data: 'id',
-		title: 'ID'},
-		{
-			data: 'name.first',
-			title: 'First Name',
-			readOnly: true
-		},
-		{
-			data: 'name.last',
-			title: 'Last Name',
-			readOnly: true
-		},
-		{data: 'address', title: 'Address', width: 150},
-		{data: 'product.description', type: 'autocomplete', title: 'Favorite food', width: 150, optionList: 'description in product.options'},
-		{data: 'price', title:'Price', type: 'numeric', width: 80, format: '$ 0,0.00'},
-		{data: 'isActive', type: 'checkbox', title: 'Is active', checkedTemplate: 'Yes', uncheckedTemplate: 'No', width:65}
-		];
 
-		setInterval(function () {
-			if( $scope.db.dynamicColumns[0].title == 'ID') {
-				$scope.db.dynamicColumns[3].readOnly = true;
-				$scope.db.dynamicColumns.shift();
-				$scope.afterChange = function () {
-//							console.log('afterChange: ','when ID column has been removed');
-};
 
-} else {
-	$scope.db.dynamicColumns[2].readOnly = false;
-	$scope.db.dynamicColumns.unshift({data: 'id', title: 'ID'});
-	$scope.afterChange = function () {
-//							console.log('afterChange: ','when ID column has been added');
-};
-}
-$scope.$apply();
-}, 3000);
+// 	$scope.db.dynamicColumns = [
+// 	{
+// 		data: 'id',
+// 		title: 'ID'},
+// 		{
+// 			data: 'name.first',
+// 			title: 'First Name',
+// 			readOnly: true
+// 		},
+// 		{
+// 			data: 'name.last',
+// 			title: 'Last Name',
+// 			readOnly: true
+// 		},
+// 		{data: 'address', title: 'Address', width: 150},
+// 		{data: 'product.description', type: 'autocomplete', title: 'Favorite food', width: 150, optionList: 'description in product.options'},
+// 		{data: 'price', title:'Price', type: 'numeric', width: 80, format: '$ 0,0.00'},
+// 		{data: 'isActive', type: 'checkbox', title: 'Is active', checkedTemplate: 'Yes', uncheckedTemplate: 'No', width:65}
+// 		];
+
+// 		setInterval(function () {
+// 			if( $scope.db.dynamicColumns[0].title == 'ID') {
+// 				$scope.db.dynamicColumns[3].readOnly = true;
+// 				$scope.db.dynamicColumns.shift();
+// 				$scope.afterChange = function () {
+// //							console.log('afterChange: ','when ID column has been removed');
+// };
+
+// } else {
+// 	$scope.db.dynamicColumns[2].readOnly = false;
+// 	$scope.db.dynamicColumns.unshift({data: 'id', title: 'ID'});
+// 	$scope.afterChange = function () {
+// //							console.log('afterChange: ','when ID column has been added');
+// };
+// }
+// $scope.$apply();
+// }, 3000);
+
+
+
+	$scope.ex = {};
+	// plain js object
+	// ******************************************************
+
+	$scope.ex.jsobject = {
+		id: 1,
+		name: {
+			first: "John",
+			last: "Doe"
+		},
+		children: 0,
+		engaged: 'No'
+	};
+
+	// *******************************************************
+
+
+
+	// js array
+	// ******************************************************
+	$scope.ex.jsarray = [];
+	var animals = ["cat", "dog", "crocodile", "fox"];
+	for(var i = 0; i < animals.length; i++){
+		$scope.ex.jsarray.push({animal: animals[i]});
 	}
-	]
-	);
+
+
+	// *******************************************************
+
+
+
+	// js value
+	// ******************************************************
+	$scope.ex.value = {
+		value: 10
+	};
+
+
+	// *******************************************************
+
+
+
+}]);

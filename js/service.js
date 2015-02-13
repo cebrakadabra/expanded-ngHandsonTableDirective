@@ -4,84 +4,83 @@ expHandsonTable.factory('settingFactory', [ function () {
 
 		containerClassName: 'handsontable-container',
 
-				/***
-				 * Append handsontable container div and initialize handsontable instance inside element
-				 * @param element
-				 * @param htSettings
-				 */
-				 initializeHandsontable: function (element, htSettings) {
-				 	var container = document.createElement('DIV');
-				 	container.className = this.containerClassName;
-				 	element[0].appendChild(container);
+			/***
+			 * Append handsontable container div and initialize handsontable instance inside element
+			 * @param element
+			 * @param htSettings
+			 */
+			initializeHandsontable: function (element, htSettings) {
+			 	var container = document.createElement('DIV');
+			 	container.className = this.containerClassName;
+			 	element[0].appendChild(container);
 
-				 	return new Handsontable(container, htSettings);
-				 },
+			 	return new Handsontable(container, htSettings);
+			},
 
-				/***
-				 * Set new settings to handsontable instance
-				 * @param instance
-				 * @param settings
-				 */
-				 updateHandsontableSettings: function (instance, settings) {
-				 	if (instance){
-				 		instance.updateSettings(settings);
-				 	}
+			/***
+			 * Set new settings to handsontable instance
+			 * @param instance
+			 * @param settings
+			 */
+			updateHandsontableSettings: function (instance, settings) {
+			 	if (instance){
+			 		instance.updateSettings(settings);
+			 	}
 
-				 },
+			},
 
-				/***
-				 * Render handsontable instance inside element
-				 * @param instance
-				 */
-				 renderHandsontable: function (instance) {
-				 	if (instance){
-				 		instance.render();
-				 	}
-				 },
+			/***
+			 * Render handsontable instance inside element
+			 * @param instance
+			 */
+			renderHandsontable: function (instance) {
+			 	if (instance){
+			 		instance.render();
+			 	}
+			},
 
-				/***
-				 *
-				 * @param htOptions
-				 * @param scopeOptions
-				 * @return {{}}
-				 */
-				 setHandsontableSettingsFromScope: function (htOptions, scopeOptions) {
-				 	var i,
-				 	settings = {},
-				 	allOptions = angular.extend({}, scopeOptions);
+			/***
+			 *
+			 * @param htOptions
+			 * @param scopeOptions
+			 * @return {{}}
+			 */
+			setHandsontableSettingsFromScope: function (htOptions, scopeOptions) {
+			 	var i,
+			 	settings = {},
+			 	allOptions = angular.extend({}, scopeOptions);
 
-				 	angular.extend(allOptions, scopeOptions.settings);
+			 	angular.extend(allOptions, scopeOptions.settings);
 
-				 	for (i in htOptions) {
-				 		if (htOptions.hasOwnProperty(i) && typeof allOptions[htOptions[i]] !== 'undefined') {
-				 			settings[htOptions[i]] = allOptions[htOptions[i]];
-				 		}
-				 	}
+			 	for (i in htOptions) {
+			 		if (htOptions.hasOwnProperty(i) && typeof allOptions[htOptions[i]] !== 'undefined') {
+			 			settings[htOptions[i]] = allOptions[htOptions[i]];
+			 		}
+			 	}
 
-				 	return settings;
-				 },
+			 	return settings;
+			},
 
-				/***
-				 *
-				 * @param options
-				 * @return {{datarows: String("="), settings: String("=")}}
-				 */
-				 getScopeDefinition: function (options) {
-				 	var scopeDefinition = {
-				 		datarows: '=',
-				 		settings: '='
-				 	};
+			/***
+			 *
+			 * @param options
+			 * @return {{datarows: String("="), settings: String("=")}}
+			 */
+			getScopeDefinition: function (options) {
+			 	var scopeDefinition = {
+			 		datarows: '=',
+			 		settings: '='
+			 	};
 
-				 	for (var i = 0, length = options.length; i < length; i++) {
-				 		scopeDefinition[options[i]] = '=' + options[i].toLowerCase();
-				 	}
+			 	for (var i = 0, length = options.length; i < length; i++) {
+			 		scopeDefinition[options[i]] = '=' + options[i].toLowerCase();
+			 	}
 
-				 	return scopeDefinition;
-				 }
-				};
+			 	return scopeDefinition;
 			}
-			]
-			);
+	};
+			
+}]);
 
 expHandsonTable.factory('autoCompleteFactory', [ function () {
 	return {
@@ -118,6 +117,4 @@ expHandsonTable.factory('autoCompleteFactory', [ function () {
 			};
 		}
 	};
-}
-]
-);
+}]);
