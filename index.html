@@ -38,7 +38,7 @@
 
 						<br>
 						<h1>Hot Table for plain js Object</h1>
-						<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="false" minSpareRows="minSpareRows" datarows="ex.jsobject" height="150" width="700"> 
+						<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="false" minSpareRows="minSpareRows" datarows="ex.jsobject" height="75" width="700"> 
 							<hot-column data="id" title="'ID'" type="grayedOut"  readOnly></hot-column>
 							<hot-column data="name.first" title="'First Name'"></hot-column>
 							<hot-column data="name.last" title="'Last Name'"></hot-column>
@@ -49,7 +49,7 @@
 
 						<br>
 						<h1>Hot Table for js Array</h1>
-						<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="true" minSpareRows="minSpareRows" datarows="ex.jsarray" height="200" width="700"> 
+						<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="true" minSpareRows="minSpareRows" datarows="ex.jsarray" height="150" width="700"> 
 							<hot-column data="animal" title="'Animals'" width="200"></hot-column>
 						</hot-table>
 
@@ -57,14 +57,45 @@
 
 						<br>
 						<h1>Hot Table for js value</h1>
-						<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="false" minSpareRows="minSpareRows" datarows="ex.value" height="200" width="700"> 
+						<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="false" minSpareRows="minSpareRows" datarows="ex.value" height="50" width="700"> 
 							<hot-column data="value" title="'Value'"></hot-column>
 						</hot-table>
 
 
+						<br>
+						<h1>Example of full Json Structure with Breadcrumbs</h1>
+						<p>Overall summary of the Json Structure:</p>
+						<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="false" minSpareRows="minSpareRows" datarows="ex.structure" height="100" width="700"> 
+							<hot-column data="id" title="'{{ex.configcols.col1_title}}'"></hot-column>
+							<hot-column data="name.first" title="'{{ex.configcols.col2_title}}'"></hot-column>
+							<hot-column data="name.last" title="'{{ex.configcols.col3_title}}'"></hot-column>
+							<hot-column data="children.sum" title="'{{ex.configcols.col4_title}}'"></hot-column>
+							<hot-column data="animals.sum" title="'{{ex.configcols.col5_title}}'"></hot-column>
+							<hot-column data="age" title="'{{ex.configcols.col6_title}}'"></hot-column>
+						</hot-table>
 
+						<div ng-repeat="p in persondata" ng-if="p.children.bool != false || p.animals.bool != false" >
+							
+							<div ng-if="p.children.bool != false">
+								<span class="breadcrumb">{{p.fullname}} > Children</span>
+								<br>
+								<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="true" minSpareRows="minSpareRows" datarows="p.children.childrennames" height="150" width="700"> 
+									<hot-column data="name" title="'Children'" width="200"></hot-column>
+								</hot-table>
+							</div>
 
+							<div ng-if="p.animals.bool != false">
+								<span class="breadcrumb">{{p.fullname}} > Animals</span>
+								<br>
+								<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="true" minSpareRows="minSpareRows" datarows="p.animals.animaltypes" height="180" width="700"> 
+									<hot-column data="type" title="'Animals'" width="200"></hot-column>
+								</hot-table>
+							</div>
+							<hr>
+						</div>
+						<br>
 
+						<br>
 
 
 
