@@ -1,5 +1,57 @@
 	<div class="container">
 
+		<!-- 
+		***************************************************************
+							DYNAMIC COLUMN SETTING
+		***************************************************************
+		-->
+<!-- 
+		<br>
+		<br>
+		<br>
+		<div class="row">
+			<h3>Dynamic Column Setting</h3>
+			<hr>
+			<hot-table settings="{rowHeaders: false, contextMenu: true, afterChange: afterChange}" colHeaders="true" datarows="db.items" columns="db.dynamicConfig" height="300" width="700"></hot-table>
+		</div> -->
+
+
+		<!-- 
+		*****************************************************************************************
+			Try to accomplish dynamic column setting in combination with breadcrumbs
+		*****************************************************************************************
+		-->
+
+		<br>
+		<br>
+		<br>
+		<div class="row">
+			<h3>Try to accomplish dynamic column setting in combination with breadcrumbs</h3>
+			<hr>
+			 <p><small>PATH:</small> <a ng-click="clickBreadcrum('root')" class="cursor">root</a> <span id="path"></span></p>
+			<hr>
+			<div class="col-md-1">
+				<br>
+				<span ng-repeat="breadcrumb in breadcrumbs" id="{{breadcrumb.id}}" class="lineheight" style="opacity: {{breadcrumb.opacity}}"><a ng-click="clickBreadcrum(breadcrumb.id)">{{breadcrumb.title}}</a><br></span>
+			</div>
+			<div class="col-md-11">
+
+			</div>
+			<hot-table settings="{rowHeaders: false, contextMenu: true, afterChange: afterChange}" colHeaders="true" datarows="db.dynrows" columns="db.dyncols" height="300" width="700"></hot-table>
+		</div>
+
+
+
+
+
+
+		<!-- 
+		***************************************************************
+							Testing structures
+		***************************************************************
+		-->
+
+
 		<div class="row">
 			<div class="col-md-6">
 
@@ -67,41 +119,6 @@
 						<br>
 
 			</div>
-		</div>
-
-
-
-		<!-- 
-		***************************************************************
-							DYNAMIC COLUMN SETTING
-		***************************************************************
-		-->
-<!-- 
-		<br>
-		<br>
-		<br>
-		<div class="row">
-			<h3>Dynamic Column Setting</h3>
-			<hr>
-			<hot-table settings="{rowHeaders: false, contextMenu: true, afterChange: afterChange}" colHeaders="true" datarows="db.items" columns="db.dynamicConfig" height="300" width="700"></hot-table>
-		</div> -->
-
-
-		<!-- 
-		*****************************************************************************************
-			Try to accomplish dynamic column setting in combination with breadcrumbs
-		*****************************************************************************************
-		-->
-
-		<br>
-		<br>
-		<br>
-		<div class="row">
-			<h3>Try to accomplish dynamic column setting in combination with breadcrumbs</h3>
-			<hr>
-			<a ng-click="clickBreadcrum('root')">root</a> > <a ng-click="clickBreadcrum('anyitem')">anyitem</a>
-			<hr>
-			<hot-table settings="{rowHeaders: false, contextMenu: true, afterChange: afterChange}" colHeaders="true" datarows="db.dynrows" columns="db.dyncols" height="300" width="700"></hot-table>
 		</div>
 
 	</div>

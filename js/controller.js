@@ -68,6 +68,7 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 	$scope.ex.structure = [
 		{
 			id: 1,
+			title: 'Person 1',
 			name: {
 				first: "John",
 				last: "Doe"
@@ -84,6 +85,7 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 		},
 		{
 			id: 2,
+			title: 'Person 2',
 			name: {
 				first: "Johanna",
 				last: "Mustard",
@@ -155,29 +157,29 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 						DYNAMIC COLUMN SETTING
 	***************************************************************
 	*/
-	var products = [
-		{
-			"description": "Big Mac",
-			"options": [
-				{"description": "Big Mac", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/hamburger.png", Pick$: null},
-				{"description": "Big Mac & Co", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/hamburger.png", Pick$: null},
-				{"description": "McRoyal", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/hamburger.png", Pick$: null},
-				{"description": "Hamburger", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/hamburger.png", Pick$: null},
-				{"description": "Cheeseburger", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/hamburger.png", Pick$: null},
-				{"description": "Double Cheeseburger", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/hamburger.png", Pick$: null}
-			]
-		},
-		{
-			"description": "Fried Potatoes",
-			"options": [
-				{"description": "Fried Potatoes", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/fries.png", Pick$: null},
-				{"description": "Fried Onions", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/fries.png", Pick$: null}
-			]
-		}
-	];
-	var firstNames = ["Ted", "John", "Macy", "Rob", "Gwen", "Fiona", "Mario", "Ben", "Kate", "Kevin", "Thomas", "Frank"];
-	var lastNames = ["Tired", "Johnson", "Moore", "Rocket", "Goodman", "Farewell", "Manson", "Bentley", "Kowalski", "Schmidt", "Tucker", "Fancy"];
-	var address = ["Turkey", "Japan", "Michigan", "Russia", "Greece", "France", "USA", "Germany", "Sweden", "Denmark", "Poland", "Belgium"];
+	// var products = [
+	// 	{
+	// 		"description": "Big Mac",
+	// 		"options": [
+	// 			{"description": "Big Mac", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/hamburger.png", Pick$: null},
+	// 			{"description": "Big Mac & Co", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/hamburger.png", Pick$: null},
+	// 			{"description": "McRoyal", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/hamburger.png", Pick$: null},
+	// 			{"description": "Hamburger", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/hamburger.png", Pick$: null},
+	// 			{"description": "Cheeseburger", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/hamburger.png", Pick$: null},
+	// 			{"description": "Double Cheeseburger", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/hamburger.png", Pick$: null}
+	// 		]
+	// 	},
+	// 	{
+	// 		"description": "Fried Potatoes",
+	// 		"options": [
+	// 			{"description": "Fried Potatoes", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/fries.png", Pick$: null},
+	// 			{"description": "Fried Onions", "image": "//a248.e.akamai.net/assets.github.com/images/icons/emoji/fries.png", Pick$: null}
+	// 		]
+	// 	}
+	// ];
+	// var firstNames = ["Ted", "John", "Macy", "Rob", "Gwen", "Fiona", "Mario", "Ben", "Kate", "Kevin", "Thomas", "Frank"];
+	// var lastNames = ["Tired", "Johnson", "Moore", "Rocket", "Goodman", "Farewell", "Manson", "Bentley", "Kowalski", "Schmidt", "Tucker", "Fancy"];
+	// var address = ["Turkey", "Japan", "Michigan", "Russia", "Greece", "France", "USA", "Germany", "Sweden", "Denmark", "Poland", "Belgium"];
 
 
 	$scope.db = {};
@@ -273,43 +275,83 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 	*/
 	$scope.db.dynrows = [];
 	$scope.db.dyncols = [];
+	$scope.breadcrumbs = [];
 
 	$scope.initData = function(){
 		console.log("init Data function");
+		$scope.db.dyncols.push(
+			{
+				data: 'id', 
+				title: 'ID'
+			}, 
+			{
+				data: 'name.first',
+				title: 'First Name'
+			},
+			{
+				data: 'name.last',
+				title: 'Last Name'
+			},
+			{
+				data: 'children.sum',
+				title: 'Children'
+			},
+			{
+				data: 'animals.sum',
+				title: 'Animals'
+			},
+			{
+				data: 'age',
+				title: 'Age'
+			}
+		);
+
+		for(var i = 0; i < $scope.ex.structure.length; i++){
+			$scope.breadcrumbs.push({title: $scope.ex.structure[i].title, id: $scope.ex.structure[i].id, opacity: 1});
+			$scope.db.dynrows.push($scope.ex.structure[i]);
+
+			if($scope.ex.structure[i].children.length > 0){
+				console.log("has children");
+			} else{
+				
+			}
+		}
+		console.log($scope.breadcrumbs);
+
 	};
 
 	$scope.initData();
 
 	
 
-	$scope.db.dyncols.push(
-		{
-			data: 'id', 
-			title: 'ID'
-		}, 
-		{
-			data: 'name.first',
-			title: 'First Name'
-		},
-		{
-			data: 'name.last',
-			title: 'Last Name'
-		},
-		{
-			data: 'cebra.kadabra',
-			title: 'Test'
-		}
-	);
+
 
 	$scope.clickBreadcrum = function(breadcrumb){
 		$scope.db.dynrows.length = 0;
-		$scope.db.dyncols.length = 0;
-		console.log(breadcrumb);
+		// $scope.db.dyncols.length = 0;
 
-		for(var i = 0; i < $scope.ex.structure.length; i++){
-			$scope.db.dynrows.push($scope.ex.structure[i]);
+		if(breadcrumb == 'root'){
+			$scope.db.dynrows.length = 0;
+			$scope.db.dyncols.length = 0;
+			$scope.breadcrumbs = [];
+			$("#path").text("");
+			$scope.initData();
+		} else{
+
+			for(var i = 0; i < $scope.ex.structure.length; i++){
+				if($scope.ex.structure[i].id == breadcrumb){
+					$scope.db.dynrows.push($scope.ex.structure[i]);
+					$scope.breadcrumbs[i].opacity = 0;
+					$("#path").append(" > <span>" +$scope.ex.structure[i].title+ "</span>");
+				} else if($scope.ex.structure[i].id != breadcrumb){
+					$scope.breadcrumbs[i].opacity = 0;
+				}
+			}
 		}
-		$scope.db.dyncols.push({data: 'id', title: 'ID'}, {data: 'name.first', title: 'First Name'});
+
+		
+		
+		// $scope.db.dyncols.push({data: 'id', title: 'ID'}, {data: 'name.first', title: 'First Name'});
 
 	};
 
