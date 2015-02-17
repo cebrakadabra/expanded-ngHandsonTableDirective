@@ -56,7 +56,7 @@
 							<div ng-if="p.animals.bool != false">
 								<span class="breadcrumb">{{p.fullname}} > Animals</span>
 								<br>
-								<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="true" minSpareRows="minSpareRows" datarows="p.animals.animaltypes" height="180" width="700"> 
+								<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'] }" rowHeaders="true" minSpareRows="minSpareRows" datarows="p.animals.animaltypes" height="180" width="700"> 
 									<hot-column data="type" title="'Animals'" width="200"></hot-column>
 								</hot-table>
 							</div>
@@ -76,15 +76,32 @@
 							DYNAMIC COLUMN SETTING
 		***************************************************************
 		-->
+<!-- 
+		<br>
+		<br>
+		<br>
+		<div class="row">
+			<h3>Dynamic Column Setting</h3>
+			<hr>
+			<hot-table settings="{rowHeaders: false, contextMenu: true, afterChange: afterChange}" colHeaders="true" datarows="db.items" columns="db.dynamicConfig" height="300" width="700"></hot-table>
+		</div> -->
+
+
+		<!-- 
+		*****************************************************************************************
+			Try to accomplish dynamic column setting in combination with breadcrumbs
+		*****************************************************************************************
+		-->
 
 		<br>
 		<br>
 		<br>
 		<div class="row">
-			<h3>Dynamic Colum Setting</h3>
+			<h3>Try to accomplish dynamic column setting in combination with breadcrumbs</h3>
 			<hr>
-			<hot-table settings="{rowHeaders: false, contextMenu: true, afterChange: afterChange}" colHeaders="true" datarows="db.items" columns="db.dynamicConfig" height="300" width="700"></hot-table>
+			<a ng-click="clickBreadcrum('root')">root</a> > <a ng-click="clickBreadcrum('anyitem')">anyitem</a>
+			<hr>
+			<hot-table settings="{rowHeaders: false, contextMenu: true, afterChange: afterChange}" colHeaders="true" datarows="db.dynrows" columns="db.dyncols" height="300" width="700"></hot-table>
 		</div>
-
 
 	</div>

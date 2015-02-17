@@ -11,12 +11,11 @@ expHandsonTable.config(function($logProvider){
 // Routing for the Views
 expHandsonTable.config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
-  		when('/home', {
-    		templateUrl: 'partials/main.html',
-    		controller: 'MainCtrl'
+  		when('/ngTable', {
+    		templateUrl: 'partials/main.html'
   		}).
   		otherwise({
-    		redirectTo: '/home'
+    		redirectTo: '/ngTable'
   	});
 }]);
 

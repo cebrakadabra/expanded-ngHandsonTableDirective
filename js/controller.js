@@ -181,87 +181,137 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 
 
 	$scope.db = {};
-	$scope.db.items = [];
-	for (var i = 0; i < 10; i++) {
-		$scope.db.items.push(
-			{
-				id: i + 1,
-				name: {
-					first: firstNames[Math.floor(Math.random() * firstNames.length)],
-					last: lastNames[Math.floor(Math.random() * lastNames.length)]
-				},
-				address: Math.floor(Math.random() * 100000) + ' ' + address[Math.floor(Math.random() * address.length)],
-				price: Math.floor(Math.random() * 100000) / 100,
-				isActive: Math.floor(Math.random() * products.length) / 2 == 0 ? 'Yes' : 'No',
-				product: angular.extend({}, products[Math.floor(Math.random() * products.length)])
-			}
-		);
-	}
+	// $scope.db.items = [];
+	// for (var i = 0; i < 10; i++) {
+	// 	$scope.db.items.push(
+	// 		{
+	// 			id: i + 1,
+	// 			name: {
+	// 				first: firstNames[Math.floor(Math.random() * firstNames.length)],
+	// 				last: lastNames[Math.floor(Math.random() * lastNames.length)]
+	// 			},
+	// 			address: Math.floor(Math.random() * 100000) + ' ' + address[Math.floor(Math.random() * address.length)],
+	// 			price: Math.floor(Math.random() * 100000) / 100,
+	// 			isActive: Math.floor(Math.random() * products.length) / 2 == 0 ? 'Yes' : 'No',
+	// 			product: angular.extend({}, products[Math.floor(Math.random() * products.length)])
+	// 		}
+	// 	);
+	// }
 
 
-	$scope.db.dynamicConfig = [
+	// $scope.db.dynamicConfig = [
+	// 	{
+	// 		data: 'id',
+	// 		title: 'ID'
+	// 	},
+	// 	{
+	// 		data: 'name.first',
+	// 		title: 'First Name',
+	// 		readOnly: true
+	// 	},
+	// 	{
+	// 		data: 'name.last',
+	// 		title: 'Last Name',
+	// 		readOnly: true
+	// 	},
+	// 	{
+	// 		data: 'address', 
+	// 		title: 'Address', 
+	// 		width: 150
+	// 	},
+	// 	{
+	// 		data: 'product.description', 
+	// 		type: 'autocomplete', 
+	// 		title: 'Favorite food', 
+	// 		width: 150, 
+	// 		optionList: 'description in product.options'
+	// 	},
+	// 	{
+	// 		data: 'price', 
+	// 		title:'Price', 
+	// 		type: 'numeric', 
+	// 		width: 80, 
+	// 		format: '$ 0,0.00'
+	// 	},
+	// 	{
+	// 		data: 'isActive', 
+	// 		type: 'checkbox', 
+	// 		title: 'Is active', 
+	// 		checkedTemplate: 'Yes', 
+	// 		uncheckedTemplate: 'No', 
+	// 		width:65
+	// 	}
+	// ];
+
+// 	setInterval(function () {
+// 		if( $scope.db.dynamicConfig[0].title == 'ID') {
+// 			$scope.db.dynamicConfig[3].readOnly = true;
+// 			$scope.db.dynamicConfig.shift();
+// 			$scope.afterChange = function () {
+// //							console.log('afterChange: ','when ID column has been removed');
+// 			};
+
+// 		} else {
+// 			$scope.db.dynamicConfig[2].readOnly = false;
+// 			$scope.db.dynamicConfig.unshift({data: 'id', title: 'ID'});
+// 			$scope.afterChange = function () {
+// //							console.log('afterChange: ','when ID column has been added');
+// 			};
+// 		}
+
+
+
+// 		$scope.$apply();
+// 	}, 3000);
+
+
+
+	/*
+		*****************************************************************************************
+			Try to accomplish dynamic column setting in combination with breadcrumbs
+		*****************************************************************************************
+	*/
+	$scope.db.dynrows = [];
+	$scope.db.dyncols = [];
+
+	$scope.initData = function(){
+		console.log("init Data function");
+	};
+
+	$scope.initData();
+
+	
+
+	$scope.db.dyncols.push(
 		{
-			data: 'id',
-			title: 'ID'},
+			data: 'id', 
+			title: 'ID'
+		}, 
 		{
 			data: 'name.first',
-			title: 'First Name',
-			readOnly: true
+			title: 'First Name'
 		},
 		{
 			data: 'name.last',
-			title: 'Last Name',
-			readOnly: true
+			title: 'Last Name'
 		},
 		{
-			data: 'address', 
-			title: 'Address', 
-			width: 150
-		},
-		{
-			data: 'product.description', 
-			type: 'autocomplete', 
-			title: 'Favorite food', 
-			width: 150, 
-			optionList: 'description in product.options'
-		},
-		{
-			data: 'price', 
-			title:'Price', 
-			type: 'numeric', 
-			width: 80, 
-			format: '$ 0,0.00'
-		},
-		{
-			data: 'isActive', 
-			type: 'checkbox', 
-			title: 'Is active', 
-			checkedTemplate: 'Yes', 
-			uncheckedTemplate: 'No', 
-			width:65
+			data: 'cebra.kadabra',
+			title: 'Test'
 		}
-	];
+	);
 
-	setInterval(function () {
-		if( $scope.db.dynamicConfig[0].title == 'ID') {
-			$scope.db.dynamicConfig[3].readOnly = true;
-			$scope.db.dynamicConfig.shift();
-			$scope.afterChange = function () {
-//							console.log('afterChange: ','when ID column has been removed');
-			};
+	$scope.clickBreadcrum = function(breadcrumb){
+		$scope.db.dynrows.length = 0;
+		$scope.db.dyncols.length = 0;
+		console.log(breadcrumb);
 
-		} else {
-			$scope.db.dynamicConfig[2].readOnly = false;
-			$scope.db.dynamicConfig.unshift({data: 'id', title: 'ID'});
-			$scope.afterChange = function () {
-//							console.log('afterChange: ','when ID column has been added');
-			};
+		for(var i = 0; i < $scope.ex.structure.length; i++){
+			$scope.db.dynrows.push($scope.ex.structure[i]);
 		}
+		$scope.db.dyncols.push({data: 'id', title: 'ID'}, {data: 'name.first', title: 'First Name'});
 
-
-
-		$scope.$apply();
-	}, 3000);
+	};
 
 
 
