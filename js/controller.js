@@ -1,4 +1,4 @@
-expHandsonTable.controller('DemoCtrl', ['$scope', function ($scope) {
+expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 
 
 	$scope.minSpareRows = 0;
@@ -127,7 +127,6 @@ expHandsonTable.controller('DemoCtrl', ['$scope', function ($scope) {
 			for(var x = 0; x < $scope.ex.structure[i].children.names.length; x++){
 				input.children.childrennames.push({name: $scope.ex.structure[i].children.names[x].name});
 			}
-			console.log(input.animals.animaltypes);
 		} else{
 			input.children.bool = false;
 		}

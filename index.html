@@ -11,90 +11,17 @@
 	<script data-jsfiddle="common" src="js/lib/jsonpath.js"></script>
 	<script type="text/javascript" src="vendor/jquery-2.0.3.js"></script>
 	<script type="text/javascript" src="vendor/angular.min.js"></script>
+	<script src="vendor/angular-route.min.js"></script>
 
 	<link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css">
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 
 </head>
 
-<body ng-controller="DemoCtrl">
-
-	<div class="container">
-
-		<div class="row">
-			<div class="col-md-6">
-
-				<br>
-				<h3>Hot Table for plain js Object</h3>
-				<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="false" minSpareRows="minSpareRows" datarows="ex.jsobject" height="75" width="700"> 
-					<hot-column data="id" title="'ID'" type="grayedOut"  readOnly></hot-column>
-					<hot-column data="name.first" title="'First Name'"></hot-column>
-					<hot-column data="name.last" title="'Last Name'"></hot-column>
-					<hot-column data="children" title="'Children'" width="150"></hot-column>
-					<hot-column data="engaged" title="'Is engaged'" type="'checkbox'"  checkedTemplate="'Yes'" uncheckedTemplate="'No'"></hot-column>
-				</hot-table>
+<body>
 
 
-				<br>
-				<h3>Hot Table for js Array</h3>
-				<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="true" minSpareRows="minSpareRows" datarows="ex.jsarray" height="150" width="700"> 
-					<hot-column data="animal" title="'Animals'" width="200"></hot-column>
-				</hot-table>
-
-
-
-				<br>
-				<h3>Hot Table for js value</h3>
-				<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="false" minSpareRows="minSpareRows" datarows="ex.value" height="50" width="700"> 
-					<hot-column data="value" title="'Value'"></hot-column>
-				</hot-table>
-
-			</div>
-			<div class="col-md-6" style="border-left: 1px dashed #ccc;">
-
-						<br>
-						<h3>Example of full Json Structure</h3>
-						<p>Overall summary of the Json Structure:</p>
-						<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="false" minSpareRows="minSpareRows" datarows="ex.structure" height="100" width="700"> 
-							<hot-column data="id" title="'{{ex.configcols.col1_title}}'"></hot-column>
-							<hot-column data="name.first" title="'{{ex.configcols.col2_title}}'"></hot-column>
-							<hot-column data="name.last" title="'{{ex.configcols.col3_title}}'"></hot-column>
-							<hot-column data="children.sum" title="'{{ex.configcols.col4_title}}'"></hot-column>
-							<hot-column data="animals.sum" title="'{{ex.configcols.col5_title}}'"></hot-column>
-							<hot-column data="age" title="'{{ex.configcols.col6_title}}'"></hot-column>
-						</hot-table>
-
-						<div ng-repeat="p in persondata" ng-if="p.children.bool != false || p.animals.bool != false" >
-							
-							<div ng-if="p.children.bool != false">
-								<span class="breadcrumb">{{p.fullname}} > Children</span>
-								<br>
-								<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="true" minSpareRows="minSpareRows" datarows="p.children.childrennames" height="150" width="700"> 
-									<hot-column data="name" title="'Children'" width="200"></hot-column>
-								</hot-table>
-							</div>
-
-							<div ng-if="p.animals.bool != false">
-								<span class="breadcrumb">{{p.fullname}} > Animals</span>
-								<br>
-								<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="true" minSpareRows="minSpareRows" datarows="p.animals.animaltypes" height="180" width="700"> 
-									<hot-column data="type" title="'Animals'" width="200"></hot-column>
-								</hot-table>
-							</div>
-							<hr>
-						</div>
-						<br>
-
-						<br>
-
-			</div>
-		</div>
-	</div>
-
-
-
-
-
+	<div ng-view ng-controller="MainCtrl">
 
 
 
