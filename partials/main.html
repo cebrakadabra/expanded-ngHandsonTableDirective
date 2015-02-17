@@ -34,18 +34,20 @@
 				<br>
 				<span ng-repeat="breadcrumb in breadcrumbs" id="{{breadcrumb.id}}" class="lineheight" style="opacity: {{breadcrumb.opacity}}"><a ng-click="clickBreadcrum(breadcrumb.id)">{{breadcrumb.title}}</a><br></span>
 			</div>
-			<div class="col-md-11">
-
+			<div class="col-md-11" id="tablediv">
+				<hot-table settings="{rowHeaders: false, contextMenu: true, afterChange: afterChange}" colHeaders="true" datarows="db.dynrows" columns="db.dyncols" height="configTable.height" width="configTable.width"></hot-table>
 			</div>
-			<hot-table settings="{rowHeaders: false, contextMenu: true, afterChange: afterChange}" colHeaders="true" datarows="db.dynrows" columns="db.dyncols" height="300" width="700"></hot-table>
+			
 		</div>
+		<br>
 
 
 
 
 
-
-		<!-- 
+		<hr>
+		<hr>
+		<!-- 	
 		***************************************************************
 							Testing structures
 		***************************************************************
@@ -84,7 +86,7 @@
 			<div class="col-md-6" style="border-left: 1px dashed #ccc;">
 
 						<br>
-						<h3>Example of full Json Structure</h3>
+						<h3>Static example of full Json Structure</h3>
 						<p>Overall summary of the Json Structure:</p>
 						<hot-table settings="{colHeaders: colHeaders, contextMenu: ['row_above', 'row_below', 'remove_row'], afterChange: afterChange }" rowHeaders="false" minSpareRows="minSpareRows" datarows="ex.structure" height="100" width="700"> 
 							<hot-column data="id" title="'{{ex.configcols.col1_title}}'"></hot-column>

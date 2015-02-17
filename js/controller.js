@@ -276,9 +276,13 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 	$scope.db.dynrows = [];
 	$scope.db.dyncols = [];
 	$scope.breadcrumbs = [];
+	$scope.configTable = {
+		height: null,
+		width: null
+	}
 
 	$scope.initData = function(){
-		console.log("init Data function");
+		// console.log("init Data function");
 		$scope.db.dyncols.push(
 			{
 				data: 'id', 
@@ -316,7 +320,11 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 				
 			}
 		}
-		console.log($scope.breadcrumbs);
+
+		var datalength = $scope.ex.structure.length;
+		$scope.configTable.height = 30 + 30*datalength;
+		$scope.configTable.width = $("#tablediv").width();
+		// console.log($scope.breadcrumbs);
 
 	};
 
