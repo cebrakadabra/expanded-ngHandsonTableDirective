@@ -199,7 +199,7 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 	}
 
 
-	$scope.db.dynamicColumns = [
+	$scope.db.dynamicConfig = [
 		{
 			data: 'id',
 			title: 'ID'},
@@ -213,27 +213,53 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 			title: 'Last Name',
 			readOnly: true
 		},
-		{data: 'address', title: 'Address', width: 150},
-		{data: 'product.description', type: 'autocomplete', title: 'Favorite food', width: 150, optionList: 'description in product.options'},
-		{data: 'price', title:'Price', type: 'numeric', width: 80, format: '$ 0,0.00'},
-		{data: 'isActive', type: 'checkbox', title: 'Is active', checkedTemplate: 'Yes', uncheckedTemplate: 'No', width:65}
+		{
+			data: 'address', 
+			title: 'Address', 
+			width: 150
+		},
+		{
+			data: 'product.description', 
+			type: 'autocomplete', 
+			title: 'Favorite food', 
+			width: 150, 
+			optionList: 'description in product.options'
+		},
+		{
+			data: 'price', 
+			title:'Price', 
+			type: 'numeric', 
+			width: 80, 
+			format: '$ 0,0.00'
+		},
+		{
+			data: 'isActive', 
+			type: 'checkbox', 
+			title: 'Is active', 
+			checkedTemplate: 'Yes', 
+			uncheckedTemplate: 'No', 
+			width:65
+		}
 	];
 
 	setInterval(function () {
-		if( $scope.db.dynamicColumns[0].title == 'ID') {
-			$scope.db.dynamicColumns[3].readOnly = true;
-			$scope.db.dynamicColumns.shift();
+		if( $scope.db.dynamicConfig[0].title == 'ID') {
+			$scope.db.dynamicConfig[3].readOnly = true;
+			$scope.db.dynamicConfig.shift();
 			$scope.afterChange = function () {
 //							console.log('afterChange: ','when ID column has been removed');
 			};
 
 		} else {
-			$scope.db.dynamicColumns[2].readOnly = false;
-			$scope.db.dynamicColumns.unshift({data: 'id', title: 'ID'});
+			$scope.db.dynamicConfig[2].readOnly = false;
+			$scope.db.dynamicConfig.unshift({data: 'id', title: 'ID'});
 			$scope.afterChange = function () {
 //							console.log('afterChange: ','when ID column has been added');
 			};
 		}
+
+
+
 		$scope.$apply();
 	}, 3000);
 
