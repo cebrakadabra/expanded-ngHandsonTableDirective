@@ -79,7 +79,7 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 			},
 			animals: {
 				sum: 6,
-				types: [{type: "cat"}, {type: "crocodile"}, {type: "dog"}, {type: "cat"}, {type: "bird"}, {type: "fish"}]
+				types: ["cat", "crocodile", "dog", "cat", "bird", "fish"]
 			},
 			age: 43
 		},
@@ -92,11 +92,11 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 			},
 			children: {
 				sum: 2,
-				names: [{name: "Valerie"}, {name: "Steve"}]
+				names: ["Valerie", "Steve"]
 			},
 			animals: {
 				sum: 6,
-				types: [{type: "cat"}, {type: "crocodile"}, {type: "dog"}, {type: "cat"}, {type: "bird"}, {type: "fish"}]
+				types: ["cat", "crocodile", "dog", "cat", "bird", "fish"]
 			},
 			age: 44
 		}
@@ -127,7 +127,7 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 			input.children.sum = $scope.ex.structure[i].children.sum;
 			input.children.childrennames = [];
 			for(var x = 0; x < $scope.ex.structure[i].children.names.length; x++){
-				input.children.childrennames.push({name: $scope.ex.structure[i].children.names[x].name});
+				input.children.childrennames.push({name: $scope.ex.structure[i].children.names[x]});
 			}
 		} else{
 			input.children.bool = false;
@@ -139,7 +139,7 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 			input.animals.sum = $scope.ex.structure[i].animals.sum;
 			input.animals.animaltypes = [];
 			for(var x = 0; x < $scope.ex.structure[i].animals.types.length; x++){
-				input.animals.animaltypes.push({type: $scope.ex.structure[i].animals.types[x].type});
+				input.animals.animaltypes.push({type: $scope.ex.structure[i].animals.types[x]});
 			}
 		} else{
 			input.animals.bool = false;
@@ -276,6 +276,7 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 	$scope.db.dynrows = [];
 	$scope.db.dyncols = [];
 	$scope.breadcrumbs = [];
+	$scope.childArrays = [];
 	$scope.configTable = {
 		height: null,
 		width: null
@@ -314,11 +315,12 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 			$scope.breadcrumbs.push({title: $scope.ex.structure[i].title, id: $scope.ex.structure[i].id, opacity: 1});
 			$scope.db.dynrows.push($scope.ex.structure[i]);
 
-			if($scope.ex.structure[i].children.length > 0){
-				console.log("has children");
-			} else{
+			// console.log($scope.ex.structure[i].children.length);
+			// if($scope.ex.structure[i].children.length > 0){
+			// 	console.log("has children");
+			// } else{
 				
-			}
+			// }
 		}
 
 		var datalength = $scope.ex.structure.length;
@@ -333,33 +335,78 @@ expHandsonTable.controller('MainCtrl', ['$scope', function ($scope) {
 	
 
 
+	$scope.children = {
+		id: null,
+		enabled: false
+	};
 
-	$scope.clickBreadcrum = function(breadcrumb){
+	$scope.animals = {
+		id: null,
+		enabled: false
+	};
+
+	$scope.clickBreadcrumb = function(breadcrumb){
 		$scope.db.dynrows.length = 0;
 		// $scope.db.dyncols.length = 0;
 
 		if(breadcrumb == 'root'){
 			$scope.db.dynrows.length = 0;
 			$scope.db.dyncols.length = 0;
+			$scope.children.enabled = false;
+			$scope.children.id = null;
 			$scope.breadcrumbs = [];
+			$scope.animals.enabled = false;
+			$scope.animals.id = null;
 			$("#path").text("");
 			$scope.initData();
+
+		} else if(breadcrumb == "animals"){
+			$scope.animals.enabled = false;
+			$scope.children.enabled = false;
+			$("#path").append(" > Animals");
+			$scope.db.dynrows.length = 0;
+			$scope.db.dyncols.length = 0;
+			$scope.db.dyncols.push({data: 'type', title: 'Animals'});
+			for(var i = 0; i < $scope.ex.structure[$scope.animals.id].animals.types.length; i++){
+				$scope.db.dynrows.push({type: $scope.ex.structure[$scope.animals.id].animals.types[i]});
+			}
+
+
+		} else if(breadcrumb == "children"){
+			$scope.animals.enabled = false;
+			$scope.children.enabled = false;
+			$("#path").append(" > Children");
+			$scope.db.dynrows.length = 0;
+			$scope.db.dyncols.length = 0;
+			$scope.db.dyncols.push({data: 'name', title: 'Children'});
+			for(var i = 0; i < $scope.ex.structure[$scope.children.id].children.names.length; i++){
+				$scope.db.dynrows.push({name: $scope.ex.structure[$scope.children.id].children.names[i]});
+			}
+
 		} else{
 
 			for(var i = 0; i < $scope.ex.structure.length; i++){
+				$scope.breadcrumbs[i].opacity = 0;
 				if($scope.ex.structure[i].id == breadcrumb){
 					$scope.db.dynrows.push($scope.ex.structure[i]);
-					$scope.breadcrumbs[i].opacity = 0;
-					$("#path").append(" > <span>" +$scope.ex.structure[i].title+ "</span>");
-				} else if($scope.ex.structure[i].id != breadcrumb){
-					$scope.breadcrumbs[i].opacity = 0;
-				}
+					$("#path").append(" > " + $scope.ex.structure[i].title+ "");
+
+
+					if($scope.ex.structure[i].animals.sum != 0){
+						$scope.animals.enabled = true;
+						$scope.animals.id = i;
+					} 
+
+					if($scope.ex.structure[i].children.sum != 0){
+						$scope.children.enabled = true;
+						$scope.children.id = i;
+					}
+
+
+				} 
 			}
 		}
-
 		
-		
-		// $scope.db.dyncols.push({data: 'id', title: 'ID'}, {data: 'name.first', title: 'First Name'});
 
 	};
 
