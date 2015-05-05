@@ -1,198 +1,162 @@
-expHandsonTable.directive('hotTable', ['settingFactory','autoCompleteFactory','$rootScope','$parse', function (settingFactory, autoCompleteFactory, $rootScope, $parse) {
+/* using handson.full.js */
+/* easier approach to wrap this */
+	expHandsonTable.directive('handsonfullDirective', [function (){
+		return {
+      restrict : 'EA',
+      transclude : false,
+      scope: {
+				data: "=",
+				header: "="
+      },
+      link : function(scope, element, attrs) {
+				var tablestructure = [];
+				var tableArray = [];
 
 
-	var publicProperties = Object.keys(Handsontable.DefaultSettings.prototype),
-	publicHooks = Object.keys(Handsontable.PluginHooks.hooks),
-	htOptions = publicProperties.concat(publicHooks);
 
-	return {
-		restrict: 'EA',
-		scope: settingFactory.getScopeDefinition(htOptions),
-		controller:['$scope', function ($scope) {
-			this.setColumnSetting = function (column) {
-				if (!$scope.htSettings) {
-					$scope.htSettings = {};
-				}
-				if (!$scope.htSettings['columns']) {
-					$scope.htSettings.columns = [];
-				}
-				$scope.htSettings['columns'].push(column);
-			};
-		}],
-		link: function (scope, element, attrs) {
-			if (!scope.htSettings) {
-				scope.htSettings = {};
-			}
-			scope.htSettings['data'] = scope.datarows;
+				scope.updateTableData = function(data){
+					var input = scope.initialData(data);
+					hot.loadData(input);
+				};
 
-			angular.extend(scope.htSettings, settingFactory.setHandsontableSettingsFromScope(htOptions, scope));
+				scope.initialData = function(data){
+					tablestructure = [];
 
-			scope.hotInstance = settingFactory.initializeHandsontable(element, scope.htSettings);
-
-			if(scope.htSettings.columns) {
-				for (var i = 0, length = scope.htSettings.columns.length; i < length; i++) {
-
-					if (scope.htSettings.columns[i].type == 'autocomplete') {
-						if(typeof scope.htSettings.columns[i].optionList === 'string'){
-							var optionList = {};
-							var match = scope.htSettings.columns[i].optionList.match(/^\s*(.+)\s+in\s+(.*)\s*$/);
-							if (match) {
-								optionList.property = match[1];
-								optionList.object = match[2];
-							} else {
-								optionList.object = optionList;
-							}
-							scope.htSettings.columns[i].optionList = optionList;
+					for(var i = 0; i < data.length; i++){
+						tablestructure.push([]);
+						var cnt = 0;
+						for(key in data[i]){
+							tablestructure[i][cnt] = data[i][key];
+							cnt++;
 						}
-
-						autoCompleteFactory.parseAutoComplete(scope.hotInstance, scope.htSettings.columns[i], scope.datarows, true);
 					}
+					return tablestructure;
 				}
-				scope.hotInstance.updateSettings(scope.htSettings);
-			}
 
-			scope.htSettings.afterChange = function () {
-				if (!$rootScope.$$phase){
-					scope.$apply();
-				}
-			};
+				scope.parseObjectData = function(data){
+					var structure = [];
 
-
-			var columnSetting = attrs.columns;
-
-					/***
-					 * Check if settings has been changed
-					 */
-					 scope.$parent.$watch(
-					 	function () {
-
-					 		var settingToCheck = scope.$parent;
-
-					 		if (columnSetting) {
-					 			return angular.toJson($parse(columnSetting)(settingToCheck));
-					 		}
-
-					 	},
-					 	function () {
-					 		angular.extend(scope.htSettings, settingFactory.setHandsontableSettingsFromScope(htOptions, scope.$parent));
-					 		settingFactory.updateHandsontableSettings(scope.hotInstance, scope.htSettings);
-
-					 	}
-					 	);
-
-
-					/***
-					 * Check if data has been changed
-					 */
-					 scope.$parent.$watch(
-					 	function () {
-					 		var objToCheck = scope.$parent;
-					 		return angular.toJson($parse(attrs.datarows)(objToCheck));
-					 	},
-					 	function () {
-					 		settingFactory.renderHandsontable(scope.hotInstance);
-					 	}
-					 	);
-
-					/***
-					 * INITIALIZE DATA
-					 */
-					 scope.$watch('datarows', function (newValue, oldValue) {
-					 	if (oldValue.length == scope.htSettings.minSpareRows && newValue.length != scope.htSettings.minSpareRows) {
-					 		scope.htSettings['data'] = scope.datarows;
-					 		settingFactory.updateHandsontableSettings(scope.hotInstance, scope.htSettings);
-					 	}
-					 });
+					for(var i = 0; i < data.length; i++){
+						structure.push([]);
+						var cnt = 0;
+						for(key in data[i]){
+							structure[i][cnt] = data[i][key];
+							cnt++;
+						}
 					}
-	};
-}]);
+					return structure;
 
+				};
 
-/***
- * Angular Handsontable directive for single column settings
- */
- expHandsonTable.directive('hotColumn', [ function () {
+				scope.updateScopeData = function(changedData){
+					if(changedData != null){
+						var objectIndex = changedData[0][0];
+						var objectItemIndex = changedData[0][1];
+						var oldValue = changedData[0][2];
+						var newValue = changedData[0][3];
 
- 	return {
- 		restrict: 'E',
- 		require:'^hotTable',
- 		scope:{},
- 		controller:['$scope', function ($scope) {
- 			this.setColumnOptionList = function (options) {
- 				if (!$scope.column) {
- 					$scope.column = {};
- 				}
-
- 				var optionList = {};
- 				var match = options.match(/^\s*(.+)\s+in\s+(.*)\s*$/);
- 				if (match) {
- 					optionList.property = match[1];
- 					optionList.object = match[2];
- 				} else {
- 					optionList.object = options.split(',');
- 				}
- 				$scope.column['optionList'] = optionList;
- 			};
- 		}],
- 		link: function (scope, element, attributes, controllerInstance) {
- 			var column = {};
-
- 			for (var i in attributes) {
- 				if (attributes.hasOwnProperty(i)) {
- 					if (i.charAt(0) !== '$' && typeof column[i] === 'undefined') {
- 						if (i === 'data') {
- 							column['data'] = attributes[i];
- 						}
- 						else {
- 							column[i] = scope.$eval(attributes[i]);
- 						}
- 					}
- 				}
- 			}
-
- 			switch (column.type) {
- 				case 'checkbox':
- 				if (typeof attributes['checkedtemplate'] !== 'undefined') {
-								column.checkedTemplate = scope.$eval(attributes['checkedtemplate']); //if undefined then defaults to Boolean true
-							}
-							if (typeof attributes['uncheckedtemplate'] !== 'undefined') {
-								column.uncheckedTemplate = scope.$eval(attributes['uncheckedtemplate']); //if undefined then defaults to Boolean true
-							}
-							break;
-						}
-
-						if (typeof attributes.readonly !== 'undefined') {
-							column.readOnly = true;
-						}
-
-						if (!scope.column) {
-							scope.column = {};
-						}
-
-						angular.extend(scope.column, column);
-						controllerInstance.setColumnSetting(scope.column);
+						scope.data[objectIndex][scope.params[objectItemIndex]] = newValue;
 					}
 				};
-}]);
+
+				scope.createTable = function(){
+
+					var uniqid = Date.now();
+					element.append("<div id="+uniqid+"></div>");
+					var elem = document.getElementById(uniqid);
+
+					var hotTable = new Handsontable(elem, {
+					  data: placeholderArray,
+					  minSpareRows: 1,
+					  rowHeaders: false,
+						colHeaders: true,
+					  contextMenu: true,
+						afterChange: function(change, source){
+							console.log("table changed");
+							// scope.updateScopeData(change);
+						},
+						afterSelection: function(row, col){
+							scope.clickCell(row, col);
+						}
+					});
+					tableArray.push(hotTable);
+					return hotTable;
+				};
+
+				scope.cleanTables = function(){
+					if(tableArray.length > 1){
+						console.log("Array is not empty");
+						tableArray[tableArray.length-2].destroy();
+					}
+				};
 
 
+				scope.clickCell = function(row, col){
 
-/***
- * Angular Handsontable directive for autocomplete settings
- */
- expHandsonTable.directive('hotAutocomplete',[ function () {
- 	return {
- 		restrict: 'E',
- 		scope: true,
- 		require:'^hotColumn',
- 		link: function (scope, element, attrs, controllerInstance) {
- 			var options = attrs.datarows;
- 			controllerInstance.setColumnOptionList(options);
- 		}
- 	};
- }
- ]
- )
+
+					// THIS IS NOT GOOD - BECAUSE I DON'T TRACK THE PATH I CAN ONLY PARSE DATA from the first level
+					var cellData = tablestructure[row][col];
+
+
+					console.log(cellData);
+
+
+					if(cellData[0].toString() == "[object Object]"){
+						console.log("I am an Array of Objects!");
+						var table = scope.createTable();
+						var parsedData = scope.parseObjectData(cellData);
+						table.loadData(parsedData);
+						scope.cleanTables();
+
+
+					} else if(isArray(cellData)){
+						console.log("I am an Array");
+						var array = [];
+						array.push(cellData);
+						var table = scope.createTable();
+						table.loadData(array);
+						scope.cleanTables();
+					} else{
+						return;
+					}
+
+				};
+
+				var isArray = function(a) {
+				    return (!!a) && (a.constructor === Array);
+				};
+
+				var isObject = function(a) {
+				    return (!!a) && (a.constructor === Object);
+				};
+
+				var placeholderArray = [[]];
+				var hot = new Handsontable(element[0], {
+				  data: placeholderArray,
+				  minSpareRows: 1,
+				  rowHeaders: false,
+					colHeaders: scope.header,
+				  contextMenu: true,
+					afterChange: function(change, source){
+						console.log("table changed");
+						scope.updateScopeData(change);
+					},
+					afterSelection: function(row, col){
+						scope.clickCell(row, col);
+					}
+				});
+
+
+				scope.$watch('data', function(newValue, oldValue) {
+						if (newValue){
+							console.log("I can see new data");
+							scope.updateTableData(scope.data);
+						}
+				}, true);
+
+
+      }
+		};
+	}])
+
  ;
-
-

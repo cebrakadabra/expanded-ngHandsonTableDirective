@@ -1,5 +1,5 @@
 var expHandsonTable = angular.module("expHandsonTable", [
-	'ngRoute', 
+	'ngRoute',
 ]);
 
 //Configuration
@@ -11,11 +11,12 @@ expHandsonTable.config(function($logProvider){
 // Routing for the Views
 expHandsonTable.config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
-  		when('/ngTable', {
-    		templateUrl: 'partials/main.html'
+			when('/handsonFull', {
+    		templateUrl: 'partials/handsonFull.html',
+				controller: 'handsonFullCtrl'
   		}).
   		otherwise({
-    		redirectTo: '/ngTable'
+    		redirectTo: '/handsonFull'
   	});
 }]);
 
@@ -23,5 +24,3 @@ expHandsonTable.config(['$routeProvider', function($routeProvider) {
 expHandsonTable.run(function($log){
 	$log.debug("test debug");
 });
-
-
