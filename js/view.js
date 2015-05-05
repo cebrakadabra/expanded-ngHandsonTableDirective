@@ -13,12 +13,15 @@
 				var tableArray = [];
 
 
-
+// ******************
+				// updates tableData on changes of the scope
 				scope.updateTableData = function(data){
 					var input = scope.initialData(data);
 					hot.loadData(input);
 				};
 
+// ******************
+				// parses the initial data from the isolated scope
 				scope.initialData = function(data){
 					tablestructure = [];
 
@@ -33,6 +36,8 @@
 					return tablestructure;
 				}
 
+// ******************
+				// parses array of objects to array of arrays as input for HandsonTable
 				scope.parseObjectData = function(data){
 					var structure = [];
 
@@ -48,6 +53,8 @@
 
 				};
 
+// ******************
+				// updates the scope data, if modifications in the table are made
 				scope.updateScopeData = function(changedData){
 					if(changedData != null){
 						var objectIndex = changedData[0][0];
@@ -59,12 +66,15 @@
 					}
 				};
 
+// ******************
+				// creates a new Handsontable
 				scope.createTable = function(){
 
 					var uniqid = Date.now();
 					element.append("<div id="+uniqid+"></div>");
 					var elem = document.getElementById(uniqid);
 
+					// create new table
 					var hotTable = new Handsontable(elem, {
 					  data: placeholderArray,
 					  minSpareRows: 1,
@@ -79,10 +89,17 @@
 							scope.clickCell(row, col);
 						}
 					});
+
+// ******************
+					// push it to overall table array
 					tableArray.push(hotTable);
+
+					// return current table
 					return hotTable;
 				};
 
+// ******************
+				// only holds the last shown table in memory
 				scope.cleanTables = function(){
 					if(tableArray.length > 1){
 						console.log("Array is not empty");
@@ -90,16 +107,13 @@
 					}
 				};
 
-
+// ******************
+				// callback event, if cell got clicked
 				scope.clickCell = function(row, col){
-
 
 					// THIS IS NOT GOOD - BECAUSE I DON'T TRACK THE PATH I CAN ONLY PARSE DATA from the first level
 					var cellData = tablestructure[row][col];
-
-
 					console.log(cellData);
-
 
 					if(cellData[0].toString() == "[object Object]"){
 						console.log("I am an Array of Objects!");
@@ -130,6 +144,8 @@
 				    return (!!a) && (a.constructor === Object);
 				};
 
+// ******************
+				// create initial Handsontable
 				var placeholderArray = [[]];
 				var hot = new Handsontable(element[0], {
 				  data: placeholderArray,
@@ -146,7 +162,8 @@
 					}
 				});
 
-
+// ******************
+				// watches changes on scope.data of directive
 				scope.$watch('data', function(newValue, oldValue) {
 						if (newValue){
 							console.log("I can see new data");
