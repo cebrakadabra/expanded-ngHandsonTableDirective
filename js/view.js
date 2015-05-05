@@ -11,6 +11,7 @@
       link : function(scope, element, attrs) {
 				var tablestructure = [];
 				var tableArray = [];
+				var keys = [];
 
 
 // ******************
@@ -29,6 +30,7 @@
 						tablestructure.push([]);
 						var cnt = 0;
 						for(key in data[i]){
+							keys.push(key);
 							tablestructure[i][cnt] = data[i][key];
 							cnt++;
 						}
@@ -62,7 +64,7 @@
 						var oldValue = changedData[0][2];
 						var newValue = changedData[0][3];
 
-						scope.data[objectIndex][scope.params[objectItemIndex]] = newValue;
+						scope.data[objectIndex][keys[objectItemIndex]] = newValue;
 					}
 				};
 
@@ -113,10 +115,12 @@
 
 					// THIS IS NOT GOOD - BECAUSE I DON'T TRACK THE PATH I CAN ONLY PARSE DATA from the first level
 					var cellData = tablestructure[row][col];
-					console.log(cellData);
+					// console.log(cellData);
 
 					if(cellData[0].toString() == "[object Object]"){
-						console.log("I am an Array of Objects!");
+						// I AM AN ARRAY OF OBJECTS
+
+						// console.log("I am an Array of Objects!");
 						var table = scope.createTable();
 						var parsedData = scope.parseObjectData(cellData);
 						table.loadData(parsedData);
@@ -124,7 +128,9 @@
 
 
 					} else if(isArray(cellData)){
-						console.log("I am an Array");
+						// I AM AN ARRAY
+
+						// console.log("I am an Array");
 						var array = [];
 						array.push(cellData);
 						var table = scope.createTable();
