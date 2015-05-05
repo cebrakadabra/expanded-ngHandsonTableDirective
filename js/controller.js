@@ -75,6 +75,18 @@ expHandsonTable.controller('handsonFullCtrl', ['$scope', '$location', '$timeout'
 					test: "hello you 4"
 				}
 			]
+		},
+		{
+			id: 5,
+			name: "Sandra3",
+			address: "Patternstreet",
+			number: "21",
+			array: ["a", "b"],
+			object: [
+				{
+					test: "hello you 5"
+				}
+			]
 		});
 		console.log("data added");
 	}, 1000);
