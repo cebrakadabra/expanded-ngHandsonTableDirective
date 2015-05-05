@@ -1,12 +1,10 @@
 # expanded-ngHandsonTableDirective
-expanded version of: http://handsontable.github.io/ngHandsontable/ - A custom json structure Editor (supporting arrays, plain objects and simple values)
+expanded version of: http://handsontable.com/ - A custom json structure Editor (supporting arrays, plain objects and simple values as a custom input structure)
 
 
 # WORK IN PROGRESS
 
 ## How to use it
-The Directives are located in js/view.js.
-
-<!-- to get started use: ```<exhandson-Directive config="config"></exhandson-Directive>``` -->
+The Directive is located in js/view.js.
 
 The repo contains a whole AngularJS example. You only have to start it on a (local) Webserver
