@@ -72,7 +72,7 @@
 
 // ******************
 				// creates a new Handsontable
-				scope.createTable = function(){
+				scope.createTable = function(customheaders){
 
 					var uniqid = Date.now();
 					element.append("<div id="+uniqid+"></div>");
@@ -83,8 +83,8 @@
 					  data: placeholderArray,
 					  minSpareRows: 1,
 					  rowHeaders: false,
-						colHeaders: true,
-					  contextMenu: true,
+						colHeaders: customheaders,
+					  contextMenu: false,
 						afterChange: function(change, source){
 							console.log("table changed");
 							// scope.updateScopeData(change);
@@ -129,22 +129,32 @@
 						cellData = tableDataArray[row][col];
 					}
 
+					// I AM AN ARRAY OF OBJECTS
 					if(cellData[0].toString() == "[object Object]"){
-						// I AM AN ARRAY OF OBJECTS
 
-						// console.log("I am an Array of Objects!");
-						var table = scope.createTable();
+
+						// custom headers from json
+						var headkeys = [];
+						for(key in cellData[0]){
+							headkeys.push(key);
+						}
+
+						var table = scope.createTable(headkeys);
 						var parsedData = scope.parseObjectData(cellData);
 						table.loadData(parsedData);
 
-
-					} else if(isArray(cellData)){
 						// I AM AN ARRAY
+					} else if(isArray(cellData)){
 
-						// console.log("I am an Array");
+						// custom headers from json
+						var headkeys = [];
+						for(var i = 0; i < cellData.length; i++){
+							headkeys.push(i);
+						}
+
 						var array = [];
 						array.push(cellData);
-						var table = scope.createTable();
+						var table = scope.createTable(headkeys);
 						table.loadData(array);
 					} else{
 						return;
@@ -168,7 +178,7 @@
 				  minSpareRows: 1,
 				  rowHeaders: false,
 					colHeaders: scope.header,
-				  contextMenu: true,
+				  contextMenu: false,
 					afterChange: function(change, source){
 						console.log("table changed");
 						scope.updateScopeData(change);
