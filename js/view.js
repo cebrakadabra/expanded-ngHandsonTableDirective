@@ -90,7 +90,7 @@
 							// scope.updateScopeData(change);
 						},
 						afterSelection: function(row, col){
-							scope.clickCell(row, col, false);
+							scope.clickCell(row, col, false, hotTable);
 						}
 					});
 
@@ -117,21 +117,16 @@
 
 // ******************
 				// callback event, if cell got clicked
-				scope.clickCell = function(row, col, origin){
-
-					// clear tables if origin table is clicked
-					if(origin){
-						scope.cleanTables();
-					}
-
+				scope.clickCell = function(row, col, origin, clickedTable){
 					var cellData = null;
-					if(tableArray.length > 0 && !origin){
-						var actualTable = tableArray[tableArray.length-1];
+					if(origin){
+						// clear tables if origin table is clicked
+						scope.cleanTables();
+						cellData = tablestructure[row][col];
+					} else{
+						var actualTable = clickedTable;
 						var tableDataArray = actualTable.getData();
 						cellData = tableDataArray[row][col];
-
-					} else{
-						cellData = tablestructure[row][col];
 					}
 
 					if(cellData[0].toString() == "[object Object]"){
