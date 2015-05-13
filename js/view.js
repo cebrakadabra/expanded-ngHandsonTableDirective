@@ -13,6 +13,8 @@
 				var tableArray = [];
 				var keys = [];
 
+				var path = [];
+
 
 // ******************
 				// updates tableData on changes of the scope
@@ -88,7 +90,7 @@
 							// scope.updateScopeData(change);
 						},
 						afterSelection: function(row, col){
-							scope.clickCell(row, col);
+							scope.clickCell(row, col, false);
 						}
 					});
 
@@ -103,19 +105,34 @@
 // ******************
 				// only holds the last shown table in memory
 				scope.cleanTables = function(){
-					if(tableArray.length > 1){
-						console.log("Array is not empty");
-						tableArray[tableArray.length-2].destroy();
+					if(tableArray.length > 0){
+						console.log("Clean up tables, start from origin");
+						// tableArray[tableArray.length-2].destroy();
+						for(var i = 0; i < tableArray.length; i++){
+							tableArray[i].destroy();
+						}
+						tableArray = [];
 					}
 				};
 
 // ******************
 				// callback event, if cell got clicked
-				scope.clickCell = function(row, col){
+				scope.clickCell = function(row, col, origin){
 
-					// THIS IS NOT GOOD - BECAUSE I DON'T TRACK THE PATH I CAN ONLY PARSE DATA from the first level
-					var cellData = tablestructure[row][col];
-					// console.log(cellData);
+					// clear tables if origin table is clicked
+					if(origin){
+						scope.cleanTables();
+					}
+
+					var cellData = null;
+					if(tableArray.length > 0 && !origin){
+						var actualTable = tableArray[tableArray.length-1];
+						var tableDataArray = actualTable.getData();
+						cellData = tableDataArray[row][col];
+
+					} else{
+						cellData = tablestructure[row][col];
+					}
 
 					if(cellData[0].toString() == "[object Object]"){
 						// I AM AN ARRAY OF OBJECTS
@@ -124,7 +141,6 @@
 						var table = scope.createTable();
 						var parsedData = scope.parseObjectData(cellData);
 						table.loadData(parsedData);
-						scope.cleanTables();
 
 
 					} else if(isArray(cellData)){
@@ -135,7 +151,6 @@
 						array.push(cellData);
 						var table = scope.createTable();
 						table.loadData(array);
-						scope.cleanTables();
 					} else{
 						return;
 					}
@@ -164,7 +179,7 @@
 						scope.updateScopeData(change);
 					},
 					afterSelection: function(row, col){
-						scope.clickCell(row, col);
+						scope.clickCell(row, col, true);
 					}
 				});
 
