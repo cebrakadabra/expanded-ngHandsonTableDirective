@@ -103,11 +103,10 @@
 				};
 
 // ******************
-				// only holds the last shown table in memory
+				// cleans up all tables if origin table was clicked
 				scope.cleanTables = function(){
 					if(tableArray.length > 0){
 						console.log("Clean up tables, start from origin");
-						// tableArray[tableArray.length-2].destroy();
 						for(var i = 0; i < tableArray.length; i++){
 							tableArray[i].destroy();
 						}
@@ -149,8 +148,8 @@
 					}
 
 					// I AM AN ARRAY OF OBJECTS
-					if(cellData[0].toString() == "[object Object]"){
-
+					//if(cellData[0].toString() == "[object Object]"){
+					if(isObject(cellData[0])){
 						// custom headers from json
 						var headkeys = [];
 						for(key in cellData[0]){
