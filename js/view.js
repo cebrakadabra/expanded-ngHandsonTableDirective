@@ -115,9 +115,16 @@
 					}
 				};
 
+				// scope.deleteLastTable = function(){
+				// 	if(tableArray.length > 1){
+				// 		tableArray[tableArray.length-1].destroy();
+				// 	}
+				// };
+
 // ******************
 				// callback event, if cell got clicked
 				scope.clickCell = function(row, col, origin, clickedTable){
+
 					var cellData = null;
 					if(origin){
 						// clear tables if origin table is clicked
@@ -132,6 +139,11 @@
 					// I AM AN ARRAY OF OBJECTS
 					if(cellData[0].toString() == "[object Object]"){
 
+						// if(!origin){
+						// 	// delete last table onClick to determine double creations
+						// 	scope.deleteLastTable();
+						// }
+
 
 						// custom headers from json
 						var headkeys = [];
@@ -145,6 +157,11 @@
 
 						// I AM AN ARRAY
 					} else if(isArray(cellData)){
+
+						// if(!origin){
+						// 	// delete last table onClick to determine double creations
+						// 	scope.deleteLastTable();
+						// }
 
 						// custom headers from json
 						var headkeys = [];

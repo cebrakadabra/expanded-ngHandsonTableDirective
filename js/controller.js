@@ -23,7 +23,21 @@ expHandsonTable.controller('handsonFullCtrl', ['$scope', '$location', '$timeout'
 					id: 1,
 					name: "Object 1",
 					animal: "Cat",
-					food: ["whiskas", "sheba"]
+					food: ["whiskas", "sheba"],
+					anyobject: [
+						{
+							id: 1,
+							name: "third level",
+							hobby: "football",
+							items: ["abc", "def", "ghi"]
+						},
+						{
+							id: 2,
+							name: "third level2",
+							hobby: "running",
+							items: ["abc", "def"]
+						}
+					]
 				},
 				{
 					id: 2,
