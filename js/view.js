@@ -66,7 +66,8 @@
 						var oldValue = changedData[0][2];
 						var newValue = changedData[0][3];
 
-						scope.data[objectIndex][keys[objectItemIndex]] = newValue;
+						// CHECK IF IT EXISTS, OTHERWISE CREATE NEW ONE, undefined check etc.
+						// scope.data[objectIndex][keys[objectItemIndex]] = newValue;
 					}
 				};
 
@@ -84,7 +85,7 @@
 					  minSpareRows: 1,
 					  rowHeaders: false,
 						colHeaders: customheaders,
-					  contextMenu: false,
+					  contextMenu: true,
 						afterChange: function(change, source){
 							console.log("table changed");
 							// scope.updateScopeData(change);
@@ -146,36 +147,41 @@
 						var tableDataArray = actualTable.getData();
 						cellData = tableDataArray[row][col];
 					}
+					if(cellData != null){
+						// I AM AN ARRAY OF OBJECTS
+						//if(cellData[0].toString() == "[object Object]"){
+						if(isObject(cellData[0])){
+							// custom headers from json
+							var headkeys = [];
+							for(key in cellData[0]){
+								headkeys.push(key);
+							}
 
-					// I AM AN ARRAY OF OBJECTS
-					//if(cellData[0].toString() == "[object Object]"){
-					if(isObject(cellData[0])){
-						// custom headers from json
-						var headkeys = [];
-						for(key in cellData[0]){
-							headkeys.push(key);
+							var table = scope.createTable(headkeys);
+							var parsedData = scope.parseObjectData(cellData);
+							table.loadData(parsedData);
+
+							// I AM AN ARRAY
+						} else if(isArray(cellData)){
+
+							// custom headers from json
+							var headkeys = [];
+							for(var i = 0; i < cellData.length; i++){
+								headkeys.push(i);
+							}
+
+							var array = [];
+							array.push(cellData);
+							var table = scope.createTable(headkeys);
+							table.loadData(array);
+						} else{
+							return;
 						}
-
-						var table = scope.createTable(headkeys);
-						var parsedData = scope.parseObjectData(cellData);
-						table.loadData(parsedData);
-
-						// I AM AN ARRAY
-					} else if(isArray(cellData)){
-
-						// custom headers from json
-						var headkeys = [];
-						for(var i = 0; i < cellData.length; i++){
-							headkeys.push(i);
-						}
-
-						var array = [];
-						array.push(cellData);
-						var table = scope.createTable(headkeys);
-						table.loadData(array);
 					} else{
-						return;
+						// table can be edited and afterChange callback will be fired
 					}
+
+
 
 				};
 
@@ -195,7 +201,7 @@
 				  minSpareRows: 1,
 				  rowHeaders: false,
 					colHeaders: scope.header,
-				  contextMenu: false,
+				  contextMenu: true,
 					afterChange: function(change, source){
 						console.log("table changed");
 						scope.updateScopeData(change);
