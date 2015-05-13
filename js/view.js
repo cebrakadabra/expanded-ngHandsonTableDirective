@@ -13,8 +13,6 @@
 				var tableArray = [];
 				var keys = [];
 
-				var path = [];
-
 
 // ******************
 				// updates tableData on changes of the scope
@@ -67,6 +65,7 @@
 						var newValue = changedData[0][3];
 
 						// CHECK IF IT EXISTS, OTHERWISE CREATE NEW ONE, undefined check etc.
+						// furthermore, check level and insert correctly
 						// scope.data[objectIndex][keys[objectItemIndex]] = newValue;
 					}
 				};
