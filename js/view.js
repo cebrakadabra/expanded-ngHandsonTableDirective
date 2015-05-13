@@ -115,15 +115,27 @@
 					}
 				};
 
-				// scope.deleteLastTable = function(){
-				// 	if(tableArray.length > 1){
-				// 		tableArray[tableArray.length-1].destroy();
-				// 	}
-				// };
+// ******************
+				// destroy all table paths,
+				// if table path is longer than actual clicked table index
+				scope.updateTablePath = function(clickedTable){
+					for(var i = tableArray.length-1; i >= 0; i--){
+						if(clickedTable != tableArray[i]){
+							tableArray[i].destroy();
+							tableArray.pop();
+						} else{
+							break;
+						}
+					}
+				};
 
 // ******************
 				// callback event, if cell got clicked
 				scope.clickCell = function(row, col, origin, clickedTable){
+
+					// destroy all table paths,
+					// if table path is longer than actual clicked table index
+					scope.updateTablePath(clickedTable);
 
 					var cellData = null;
 					if(origin){
@@ -139,12 +151,6 @@
 					// I AM AN ARRAY OF OBJECTS
 					if(cellData[0].toString() == "[object Object]"){
 
-						// if(!origin){
-						// 	// delete last table onClick to determine double creations
-						// 	scope.deleteLastTable();
-						// }
-
-
 						// custom headers from json
 						var headkeys = [];
 						for(key in cellData[0]){
@@ -157,11 +163,6 @@
 
 						// I AM AN ARRAY
 					} else if(isArray(cellData)){
-
-						// if(!origin){
-						// 	// delete last table onClick to determine double creations
-						// 	scope.deleteLastTable();
-						// }
 
 						// custom headers from json
 						var headkeys = [];
