@@ -240,12 +240,12 @@
 						Handsontable.Dom.addEvent(img, 'mouseenter', function (e){
 							// console.log("mouseover");
 
-							displayDiv = document.createElement('DIV');
+							displayDiv = document.createElement('PRE');
 							//styles
 							displayDiv.style.position = "absolute";
 							displayDiv.style.left = e.pageX + "px";
 							displayDiv.style.top = e.pageY + "px";
-							displayDiv.style.width = "150px";
+							displayDiv.style.width = "300px";
 							displayDiv.style.background = "#ffffff";
 							displayDiv.style.color = "#aaa";
 							displayDiv.style.fontSize = "10px";
