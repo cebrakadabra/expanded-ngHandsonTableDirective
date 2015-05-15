@@ -16,6 +16,14 @@
 				for(var i = 0; i < scope.header.length; i++){
 					rendererArray.push({renderer: coverRenderer});
 				}
+				var pos = {x: 0, y: 0};
+				var mouse = {x: 0, y: 0};
+				var oldLeft = 0, oldTop = 0;
+				document.addEventListener('mousemove', function(e){
+					//	console.log(e.target.parent());
+				    mouse.x = e.clientX || e.pageX;
+				    mouse.y = e.clientY || e.pageY
+				}, false);
 
 
 // ******************
@@ -79,8 +87,11 @@
 				// creates a new Handsontable
 				scope.createTable = function(customheaders, renderers){
 
+					// get current position of next generated table
+					scope.positionOfTable();
+
 					var uniqid = Date.now();
-					element.append("<div id="+uniqid+"></div>");
+					element.append("<div id="+uniqid+" style='position: fixed; left: "+pos.x+"px; top: "+pos.y+"px;'></div>");
 					var elem = document.getElementById(uniqid);
 
 					// create new table
@@ -95,7 +106,7 @@
 							console.log("table changed");
 							// scope.updateScopeData(change);
 						},
-						afterSelection: function(row, col){
+						afterSelectionEnd: function(row, col){
 							scope.clickCell(row, col, false, hotTable);
 						}
 					});
@@ -134,9 +145,38 @@
 					}
 				};
 
+
+// ******************
+				// get current position of next generated table
+				scope.positionOfTable = function(){
+					pos.x = 0;
+					pos.y = 0;
+					var current = $("td.current");
+					var left = 0;
+					var top = 0;
+					var height = 0;
+					var clickOffset = 50;
+					var maxX = mouse.x + clickOffset;
+					var minX = mouse.x - clickOffset;
+					var minY = mouse.y - clickOffset;
+					var maxY = mouse.y + clickOffset;
+
+					for(var i = 0; i < current.length; i++){
+						var offset = $(current[i]).offset();
+						left = offset.left;
+						top = offset.top;
+						height = current[i].offsetHeight;
+					}
+
+					if((left < maxX) && (left > minX) && (top < maxY) && (top > minY)){
+						pos.x = left;
+						pos.y = top + height;
+					}
+				};
+
 // ******************
 				// callback event, if cell got clicked
-				scope.clickCell = function(row, col, origin, clickedTable){
+				scope.clickCell = function(row, col, origin, clickedTable, event){
 
 					// destroy all table paths,
 					// if table path is longer than actual clicked table index
@@ -147,6 +187,9 @@
 						// clear tables if origin table is clicked
 						scope.cleanTables();
 						cellData = tablestructure[row][col];
+						// get current position of next generated table
+						scope.positionOfTable();
+
 					} else{
 						var actualTable = clickedTable;
 						var tableDataArray = actualTable.getData();
@@ -216,7 +259,7 @@
 						console.log("table changed");
 						scope.updateScopeData(change);
 					},
-					afterSelection: function(row, col){
+					afterSelectionEnd: function(row, col){
 						scope.clickCell(row, col, true);
 					}
 				});
@@ -233,6 +276,21 @@
 						img = document.createElement('IMG');
 						img.style.width = "30px";
 
+						displayDiv = document.createElement('PRE');
+						//styles
+						displayDiv.style.position = "absolute";
+						displayDiv.style.width = "300px";
+						displayDiv.style.background = "#ffffff";
+						displayDiv.style.color = "#aaa";
+						displayDiv.style.fontSize = "10px";
+						displayDiv.style.border = "1px solid #aaa";
+						displayDiv.style.padding = "5px";
+						displayDiv.style.display = "none";
+						displayDiv.style.zIndex = "32000";
+						displayDiv.id ="previewPre";
+
+						document.body.appendChild(displayDiv);
+
 						Handsontable.Dom.addEvent(img, 'mousedown', function (e){
 							e.preventDefault(); // prevent selection quirk
 						});
@@ -240,26 +298,18 @@
 						Handsontable.Dom.addEvent(img, 'mouseenter', function (e){
 							// console.log("mouseover");
 
-							displayDiv = document.createElement('PRE');
-							//styles
-							displayDiv.style.position = "absolute";
+							// div position
 							displayDiv.style.left = e.pageX + "px";
 							displayDiv.style.top = e.pageY + "px";
-							displayDiv.style.width = "300px";
-							displayDiv.style.background = "#ffffff";
-							displayDiv.style.color = "#aaa";
-							displayDiv.style.fontSize = "10px";
-							displayDiv.style.border = "1px solid #aaa";
-							displayDiv.style.padding = "5px";
 
 							// insert values
 							displayDiv.innerHTML = JSON.stringify(value, undefined, 2);
-							document.body.appendChild(displayDiv);
+							displayDiv.style.display = "block";
 						});
 
 						Handsontable.Dom.addEvent(img, 'mouseleave', function (e){
 							// console.log("mouseleave");
-							displayDiv.remove();
+							displayDiv.style.display = "none";
 
 						});
 
