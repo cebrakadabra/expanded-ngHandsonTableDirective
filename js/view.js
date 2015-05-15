@@ -12,6 +12,10 @@
 				var tablestructure = [];
 				var tableArray = [];
 				var keys = [];
+				var rendererArray = [];
+				for(var i = 0; i < scope.header.length; i++){
+					rendererArray.push({renderer: coverRenderer});
+				}
 
 
 // ******************
@@ -35,6 +39,7 @@
 							cnt++;
 						}
 					}
+
 					return tablestructure;
 				}
 
@@ -72,7 +77,7 @@
 
 // ******************
 				// creates a new Handsontable
-				scope.createTable = function(customheaders){
+				scope.createTable = function(customheaders, renderers){
 
 					var uniqid = Date.now();
 					element.append("<div id="+uniqid+"></div>");
@@ -85,6 +90,7 @@
 					  rowHeaders: false,
 						colHeaders: customheaders,
 					  contextMenu: true,
+						columns: renderers,
 						afterChange: function(change, source){
 							console.log("table changed");
 							// scope.updateScopeData(change);
@@ -152,11 +158,13 @@
 						if(isObject(cellData[0])){
 							// custom headers from json
 							var headkeys = [];
+							var renderers = [];
 							for(key in cellData[0]){
 								headkeys.push(key);
+								renderers.push({renderer: coverRenderer});
 							}
 
-							var table = scope.createTable(headkeys);
+							var table = scope.createTable(headkeys, renderers);
 							var parsedData = scope.parseObjectData(cellData);
 							table.loadData(parsedData);
 
@@ -165,13 +173,15 @@
 
 							// custom headers from json
 							var headkeys = [];
+							var renderers = [];
 							for(var i = 0; i < cellData.length; i++){
 								headkeys.push(i);
+								renderers.push({renderer: coverRenderer});
 							}
 
 							var array = [];
 							array.push(cellData);
-							var table = scope.createTable(headkeys);
+							var table = scope.createTable(headkeys, renderers);
 							table.loadData(array);
 						} else{
 							return;
@@ -201,6 +211,7 @@
 				  rowHeaders: false,
 					colHeaders: scope.header,
 				  contextMenu: true,
+					columns: rendererArray,
 					afterChange: function(change, source){
 						console.log("table changed");
 						scope.updateScopeData(change);
@@ -209,6 +220,74 @@
 						scope.clickCell(row, col, true);
 					}
 				});
+
+
+// ******************
+				// Icon Renderer
+				function coverRenderer (instance, td, row, col, prop, value, cellProperties) {
+			    var escaped = Handsontable.helper.stringify(value),
+			      img,
+						displayDiv;
+
+			    if (isArray(value)) {
+						img = document.createElement('IMG');
+						img.style.width = "30px";
+
+						Handsontable.Dom.addEvent(img, 'mousedown', function (e){
+							e.preventDefault(); // prevent selection quirk
+						});
+
+						Handsontable.Dom.addEvent(img, 'mouseenter', function (e){
+							// console.log("mouseover");
+
+							displayDiv = document.createElement('DIV');
+							//styles
+							displayDiv.style.position = "absolute";
+							displayDiv.style.left = e.pageX + "px";
+							displayDiv.style.top = e.pageY + "px";
+							displayDiv.style.width = "150px";
+							displayDiv.style.background = "#ffffff";
+							displayDiv.style.color = "#aaa";
+							displayDiv.style.fontSize = "10px";
+							displayDiv.style.border = "1px solid #aaa";
+							displayDiv.style.padding = "5px";
+
+							// insert values
+							displayDiv.innerHTML = JSON.stringify(value, undefined, 2);
+							document.body.appendChild(displayDiv);
+						});
+
+						Handsontable.Dom.addEvent(img, 'mouseleave', function (e){
+							// console.log("mouseleave");
+							displayDiv.remove();
+
+						});
+
+						if(isObject(value[0])){
+				      img.src = "images/object.png";
+						} else{
+				      img.src = "images/array.png";
+						}
+
+						Handsontable.Dom.empty(td);
+						td.appendChild(img);
+
+
+
+					} else {
+			      // render as text
+			      Handsontable.renderers.TextRenderer.apply(this, arguments);
+			    }
+
+			    return td;
+			  }
+
+
+
+
+
+
+
 
 // ******************
 				// watches changes on scope.data of directive
