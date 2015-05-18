@@ -102,7 +102,10 @@
 							var col = change[1];
 							tableArray[row][col] = newVal;
 						}
-						table.loadData(tableArray);
+						var rerender = table.getInstance();
+						console.log(rerender);
+						rerender.render();
+						// table.loadData(tableArray);
 					}
 
 			};
