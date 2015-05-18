@@ -68,6 +68,32 @@
 
 				};
 
+
+// ******************
+				// update table on cell change
+				scope.updateCurrentTable = function(change, source, table){
+					console.log(change);
+					console.log(table);
+					if(change != null){
+						var tableArray = table.getData();
+
+						var newVal = change[0][3];
+						var row = change[0][0];
+						var col = change[0][1];
+						if((newVal.charAt(0) == "[") || (newVal.charAt(0) == "{")){
+							tableArray[row][col] = JSON.parse(newVal);
+						} else{
+							tableArray[row][col] = newVal;
+						}
+
+
+						table.loadData(tableArray);
+					}
+
+
+				};
+
+
 // ******************
 				// updates the scope data, if modifications in the table are made
 				scope.updateScopeData = function(changedData){
@@ -105,9 +131,13 @@
 						afterChange: function(change, source){
 							console.log("table changed");
 							// scope.updateScopeData(change);
+							scope.updateCurrentTable(change, source, hotTable);
 						},
 						afterSelectionEnd: function(row, col){
 							scope.clickCell(row, col, false, hotTable);
+						},
+						afterRemoveRow: function(){
+							console.log("row removed");
 						}
 					});
 
@@ -258,9 +288,13 @@
 					afterChange: function(change, source){
 						console.log("table changed");
 						scope.updateScopeData(change);
+						scope.updateCurrentTable(change, source, hot);
 					},
 					afterSelectionEnd: function(row, col){
 						scope.clickCell(row, col, true);
+					},
+					afterRemoveRow: function(){
+						console.log("row removed");
 					}
 				});
 
@@ -331,10 +365,6 @@
 
 			    return td;
 			  }
-
-
-
-
 
 
 
