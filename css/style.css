@@ -11,3 +11,9 @@
 #previewPre{
 	pointer-events: none;
 }
+
+.handsontableInput{
+	min-width: 250px !important;
+	min-height: 100px !important;
+	resize:both !important;
+}
