@@ -73,14 +73,19 @@
 				// update table on cell change
 				scope.updateCurrentTable = function(change, source, table){
 
+					console.log(change);
+
 					if(change != null){
+						console.log("I'm here");
 						var tableArray = table.getData();
 
+						var newVal = change[0][3];
+						var row = change[0][0];
+						var col = change[0][1];
+						tableArray[row][col] = newVal;
+
 						if(isArray(change[0])){
-							var newVal = change[0][3];
-							var row = change[0][0];
-							var col = change[0][1];
-							if((newVal.charAt(0) == "[") || (newVal.charAt(0) == "{")){
+							if(newVal.charAt(0) == "["){
 								try{
 									tableArray[row][col] = JSON.parse(newVal);
 								} catch(e){
@@ -90,17 +95,17 @@
 							} else{
 								tableArray[row][col] = newVal;
 							}
+
 						} else{
 							var newVal = change[3];
 							var row = change[0];
 							var col = change[1];
 							tableArray[row][col] = newVal;
 						}
-
-
 						table.loadData(tableArray);
 					}
-				};
+
+			};
 
 
 // ******************
@@ -319,8 +324,12 @@
 				  contextMenu: true,
 					columns: rendererArray,
 					afterChange: function(change, source){
+						console.log("********");
 						console.log("table changed");
-						scope.updateScopeData(hot);
+						console.log(change);
+						console.log(source);
+						console.log("********");
+						// scope.updateScopeData(hot);
 						scope.updateCurrentTable(change, source, hot);
 					},
 					afterSelectionEnd: function(row, col){
