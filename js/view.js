@@ -72,41 +72,54 @@
 // ******************
 				// update table on cell change
 				scope.updateCurrentTable = function(change, source, table){
-					console.log(change);
-					console.log(table);
+
 					if(change != null){
 						var tableArray = table.getData();
 
-						var newVal = change[0][3];
-						var row = change[0][0];
-						var col = change[0][1];
-						if((newVal.charAt(0) == "[") || (newVal.charAt(0) == "{")){
-							tableArray[row][col] = JSON.parse(newVal);
+						if(isArray(change[0])){
+							var newVal = change[0][3];
+							var row = change[0][0];
+							var col = change[0][1];
+							if((newVal.charAt(0) == "[") || (newVal.charAt(0) == "{")){
+								try{
+									tableArray[row][col] = JSON.parse(newVal);
+								} catch(e){
+									alert(e);
+								}
+
+							} else{
+								tableArray[row][col] = newVal;
+							}
 						} else{
+							var newVal = change[3];
+							var row = change[0];
+							var col = change[1];
 							tableArray[row][col] = newVal;
 						}
 
 
 						table.loadData(tableArray);
 					}
-
-
 				};
 
 
 // ******************
 				// updates the scope data, if modifications in the table are made
-				scope.updateScopeData = function(changedData){
-					if(changedData != null){
-						var objectIndex = changedData[0][0];
-						var objectItemIndex = changedData[0][1];
-						var oldValue = changedData[0][2];
-						var newValue = changedData[0][3];
-
-						// CHECK IF IT EXISTS, OTHERWISE CREATE NEW ONE, undefined check etc.
-						// furthermore, check level and insert correctly
-						// scope.data[objectIndex][keys[objectItemIndex]] = newValue;
+				scope.updateScopeData = function(table){
+					// if(changedData != null){
+					// 	var objectIndex = changedData[0][0];
+					// 	var objectItemIndex = changedData[0][1];
+					// 	var oldValue = changedData[0][2];
+					// 	var newValue = changedData[0][3];
+					//
+					// 	// CHECK IF IT EXISTS, OTHERWISE CREATE NEW ONE, undefined check etc.
+					// 	// furthermore, check level and insert correctly
+					// 	// scope.data[objectIndex][keys[objectItemIndex]] = newValue;
+					// }
+					if(table != null){
+						console.log(table.getData());
 					}
+
 				};
 
 // ******************
@@ -122,24 +135,44 @@
 
 					// create new table
 					var hotTable = new Handsontable(elem, {
-					  data: placeholderArray,
+					  data: [[]],
 					  minSpareRows: 1,
 					  rowHeaders: false,
 						colHeaders: customheaders,
+						columnSorting: true,
 					  contextMenu: true,
 						columns: renderers,
 						afterChange: function(change, source){
 							console.log("table changed");
-							// scope.updateScopeData(change);
 							scope.updateCurrentTable(change, source, hotTable);
+							scope.updateScopeData(hot);
 						},
 						afterSelectionEnd: function(row, col){
 							scope.clickCell(row, col, false, hotTable);
 						},
 						afterRemoveRow: function(){
 							console.log("row removed");
+						},
+						afterCreateCol: function(){
+							console.log("col created");
+						},
+						afterCreateRow: function(){
+							console.log("row created");
+
 						}
 					});
+
+				// 	var container = document.getElementById("example");
+				// 	var hot = new Handsontable(elem, {
+				// 	data: [[]],
+				// 	colHeaders: true,
+				// 	rowHeaders: true,
+				// 	stretchH: 'all',
+				// 	columnSorting: true,
+				// 	contextMenu: true
+				// });
+				//
+				// 	hot.loadData(data);
 
 // ******************
 					// push it to overall table array
@@ -254,7 +287,7 @@
 
 							var array = [];
 							array.push(cellData);
-							var table = scope.createTable(headkeys, renderers);
+							var table = scope.createTable(headkeys, null);
 							table.loadData(array);
 						} else{
 							return;
@@ -287,7 +320,7 @@
 					columns: rendererArray,
 					afterChange: function(change, source){
 						console.log("table changed");
-						scope.updateScopeData(change);
+						scope.updateScopeData(hot);
 						scope.updateCurrentTable(change, source, hot);
 					},
 					afterSelectionEnd: function(row, col){
@@ -295,6 +328,12 @@
 					},
 					afterRemoveRow: function(){
 						console.log("row removed");
+					},
+					afterCreateCol: function(){
+						console.log("col created");
+					},
+					afterCreateRow: function(){
+						console.log("row created");
 					}
 				});
 
