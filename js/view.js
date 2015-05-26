@@ -73,12 +73,11 @@
 				// update table on cell change
 				scope.updateCurrentTable = function(change, source, table){
 
-					console.log(change);
+					// console.log(change);
 
 					if(change != null){
-						console.log("I'm here");
-						var tableArray = table.getData();
 
+						var tableArray = table.getData();
 						var newVal = change[0][3];
 						var row = change[0][0];
 						var col = change[0][1];
@@ -103,7 +102,7 @@
 							tableArray[row][col] = newVal;
 						}
 						var rerender = table.getInstance();
-						console.log(rerender);
+						// console.log(rerender);
 						rerender.render();
 						// table.loadData(tableArray);
 					}
@@ -125,7 +124,34 @@
 					// 	// scope.data[objectIndex][keys[objectItemIndex]] = newValue;
 					// }
 					if(table != null){
-						console.log(table.getData());
+
+						var tableData = table.getData();
+						var colHeaders = table.getColHeader();
+
+						var helperArrayObject = [];
+
+						console.log(tableData.length);
+						var currObject = {};
+						for(var i = 0; i < tableData.length; i++){
+							helperArrayObject.push({});
+							currObject = {};
+							for(var x = 0; x < colHeaders.length; x++){
+									currObject[colHeaders[x]] = tableData[i][x];
+							}
+							helperArrayObject[i] = currObject;
+						}
+
+						// remove empty row
+						helperArrayObject.pop();
+						console.log("HELPERARRAYOBJECT");
+						console.log(helperArrayObject);
+						console.log("***");
+						console.log("SCOPEDATA");
+						console.log(scope.data);
+						console.log("***");
+
+						// console.log(table.getColHeader());
+						// console.log(xy);
 					}
 
 				};
@@ -153,7 +179,7 @@
 						afterChange: function(change, source){
 							console.log("table changed");
 							scope.updateCurrentTable(change, source, hotTable);
-							scope.updateScopeData(hot);
+							scope.updateScopeData(hotTable);
 						},
 						afterSelectionEnd: function(row, col){
 							scope.clickCell(row, col, false, hotTable);
@@ -328,12 +354,12 @@
 					columns: rendererArray,
 					afterChange: function(change, source){
 						console.log("********");
-						console.log("table changed");
+						console.log("table changed (root)");
 						console.log(change);
 						console.log(source);
 						console.log("********");
-						// scope.updateScopeData(hot);
 						scope.updateCurrentTable(change, source, hot);
+						scope.updateScopeData(hot);
 					},
 					afterSelectionEnd: function(row, col){
 						scope.clickCell(row, col, true);
@@ -356,6 +382,7 @@
 			    var escaped = Handsontable.helper.stringify(value),
 			      img,
 						displayDiv;
+						// console.log(value);
 
 			    if (isArray(value)) {
 						img = document.createElement('IMG');
@@ -414,6 +441,8 @@
 			      Handsontable.renderers.TextRenderer.apply(this, arguments);
 			    }
 
+					// console.log("TD: ");
+					// console.log(td);
 			    return td;
 			  }
 
