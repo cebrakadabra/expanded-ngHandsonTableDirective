@@ -13,6 +13,8 @@
 				var tableArray = [];
 				var keys = [];
 				var rendererArray = [];
+				var curPath = null;
+
 				for(var i = 0; i < scope.header.length; i++){
 					rendererArray.push({renderer: coverRenderer});
 				}
@@ -128,27 +130,34 @@
 						var tableData = table.getData();
 						var colHeaders = table.getColHeader();
 
-						var helperArrayObject = [];
 
-						console.log(tableData.length);
+						var helperArrayObject = [];
 						var currObject = {};
-						for(var i = 0; i < tableData.length; i++){
-							helperArrayObject.push({});
-							currObject = {};
-							for(var x = 0; x < colHeaders.length; x++){
-									currObject[colHeaders[x]] = tableData[i][x];
+
+						if(colHeaders[0] != 0){
+							for(var i = 0; i < tableData.length; i++){
+								helperArrayObject.push({});
+								currObject = {};
+								for(var x = 0; x < colHeaders.length; x++){
+										currObject[colHeaders[x]] = tableData[i][x];
+								}
+								helperArrayObject[i] = currObject;
 							}
-							helperArrayObject[i] = currObject;
+							// remove empty row
+							helperArrayObject.pop();
+						} else{
+							helperArrayObject = tableData[0];
 						}
 
-						// remove empty row
-						helperArrayObject.pop();
+
+
 						console.log("HELPERARRAYOBJECT");
 						console.log(helperArrayObject);
 						console.log("***");
 						console.log("SCOPEDATA");
-						console.log(scope.data);
+						console.log(scope.data[0]);
 						console.log("***");
+						console.log(tableArray);
 
 						// console.log(table.getColHeader());
 						// console.log(xy);
@@ -278,6 +287,7 @@
 					// destroy all table paths,
 					// if table path is longer than actual clicked table index
 					scope.updateTablePath(clickedTable);
+					console.log(row, col);
 
 					var cellData = null;
 					if(origin){
