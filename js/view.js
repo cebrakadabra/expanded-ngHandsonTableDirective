@@ -299,12 +299,6 @@
 					// destroy all table paths,
 					// if table path is longer than actual clicked table index
 					scope.updateTablePath(clickedTable);
-					clickedTableArray.push(clickedTable);
-
-
-
-
-
 
 					var cellData = null;
 					if(origin){
@@ -334,20 +328,18 @@
 					}
 					if(cellData != null){
 
+						// save cell paths on click
+						var tableArrayLength = tableArray.length;
+						var doubleTableArrayLength = tableArrayLength*2;
+						curPath = curPath.slice(0, doubleTableArrayLength);
+						curPath.push(row);
+						curPath.push(col);
+
 						// I AM AN ARRAY OF OBJECTS
 						//if(cellData[0].toString() == "[object Object]"){
 
 						if(isObject(cellData[0])){
-							console.log("IN HERE");
-							// if(clickedTableArray[clickedTableArray.length-2] == clickedTable){
-							// 	curPath.pop();
-							// 	curPath.pop();
-							// }
-							var tableArrayLength = tableArray.length;
-							var doubleTableArrayLength = tableArrayLength*2;
-							curPath = curPath.slice(0, doubleTableArrayLength);
-							curPath.push(row);
-							curPath.push(col);
+
 							// custom headers from json
 							var headkeys = [];
 							var renderers = [];
@@ -362,15 +354,7 @@
 
 							// I AM AN ARRAY
 						} else if(isArray(cellData)){
-							// if(clickedTableArray[clickedTableArray.length-2] == clickedTable){
-							// 	curPath.pop();
-							// 	curPath.pop();
-							// }
-							var tableArrayLength = tableArray.length;
-							var doubleTableArrayLength = tableArrayLength*2;
-							curPath = curPath.slice(0, doubleTableArrayLength);
-							curPath.push(row);
-							curPath.push(col);
+
 							// custom headers from json
 							var headkeys = [];
 							var renderers = [];
@@ -384,11 +368,6 @@
 							var table = scope.createTable(headkeys, null);
 							table.loadData(array);
 						} else{
-							var tableArrayLength = tableArray.length;
-							var doubleTableArrayLength = tableArrayLength*2;
-							curPath = curPath.slice(0, doubleTableArrayLength);
-							curPath.push(row);
-							curPath.push(col);
 							// return;
 						}
 					} else{
