@@ -105,4 +105,9 @@ expHandsonTable.controller('handsonFullCtrl', ['$scope', '$location', '$timeout'
 		console.log("data added");
 	}, 1000);
 
+
+	$timeout(function(){
+		console.log($scope.items);
+	}, 10000);
+
 }]);

@@ -1,6 +1,6 @@
 /* using handson.full.js */
 /* easier approach to wrap this */
-	expHandsonTable.directive('handsonfullDirective', [function (){
+	expHandsonTable.directive('handsonfullDirective', ['$timeout', function ($timeout){
 		return {
       restrict : 'EA',
       transclude : false,
@@ -14,6 +14,7 @@
 				var keys = [];
 				var rendererArray = [];
 				var curPath = null;
+				var tableIsOrigin = false;
 
 				for(var i = 0; i < scope.header.length; i++){
 					rendererArray.push({renderer: coverRenderer});
@@ -79,29 +80,29 @@
 
 					if(change != null){
 
-						var tableArray = table.getData();
+						var curTableDataArray = table.getData();
 						var newVal = change[0][3];
 						var row = change[0][0];
 						var col = change[0][1];
-						tableArray[row][col] = newVal;
+						curTableDataArray[row][col] = newVal;
 
 						if(isArray(change[0])){
 							if(newVal.charAt(0) == "["){
 								try{
-									tableArray[row][col] = JSON.parse(newVal);
+									curTableDataArray[row][col] = JSON.parse(newVal);
 								} catch(e){
 									alert(e);
 								}
 
 							} else{
-								tableArray[row][col] = newVal;
+								curTableDataArray[row][col] = newVal;
 							}
 
 						} else{
 							var newVal = change[3];
 							var row = change[0];
 							var col = change[1];
-							tableArray[row][col] = newVal;
+							curTableDataArray[row][col] = newVal;
 						}
 						var rerender = table.getInstance();
 						// console.log(rerender);
@@ -149,15 +150,22 @@
 							helperArrayObject = tableData[0];
 						}
 
+						if(tableIsOrigin){
+							scope.data = [];
+							scope.data = helperArrayObject;
+							$timeout(function(){
+								scope.$apply();
+							});
+						}else{
 
+						}
 
-						console.log("HELPERARRAYOBJECT");
-						console.log(helperArrayObject);
-						console.log("***");
-						console.log("SCOPEDATA");
-						console.log(scope.data[0]);
-						console.log("***");
-						console.log(tableArray);
+						// console.log("HELPERARRAYOBJECT");
+						// console.log(helperArrayObject);
+						// console.log("***");
+						// console.log("SCOPEDATA");
+						// console.log(scope.data);
+						// console.log("***");
 
 						// console.log(table.getColHeader());
 						// console.log(xy);
@@ -186,7 +194,7 @@
 					  contextMenu: true,
 						columns: renderers,
 						afterChange: function(change, source){
-							console.log("table changed");
+							// console.log("table changed");
 							scope.updateCurrentTable(change, source, hotTable);
 							scope.updateScopeData(hotTable);
 						},
@@ -194,13 +202,13 @@
 							scope.clickCell(row, col, false, hotTable);
 						},
 						afterRemoveRow: function(){
-							console.log("row removed");
+							// console.log("row removed");
 						},
 						afterCreateCol: function(){
-							console.log("col created");
+							// console.log("col created");
 						},
 						afterCreateRow: function(){
-							console.log("row created");
+							// console.log("row created");
 
 						}
 					});
@@ -229,7 +237,7 @@
 				// cleans up all tables if origin table was clicked
 				scope.cleanTables = function(){
 					if(tableArray.length > 0){
-						console.log("Clean up tables, start from origin");
+						// console.log("Clean up tables, start from origin");
 						for(var i = 0; i < tableArray.length; i++){
 							tableArray[i].destroy();
 						}
@@ -287,13 +295,22 @@
 					// destroy all table paths,
 					// if table path is longer than actual clicked table index
 					scope.updateTablePath(clickedTable);
-					console.log(row, col);
 
 					var cellData = null;
 					if(origin){
 						// clear tables if origin table is clicked
 						scope.cleanTables();
 						cellData = tablestructure[row][col];
+						// curPath = tablestructure[row][col];
+						// console.log(curPath);
+						if(cellData != null){
+							if(!isObject(cellData[0]) && !isArray(cellData)){
+								tableIsOrigin = true;
+							} else{
+								tableIsOrigin = false;
+							}
+						}
+
 						// get current position of next generated table
 						scope.positionOfTable();
 
@@ -301,8 +318,14 @@
 						var actualTable = clickedTable;
 						var tableDataArray = actualTable.getData();
 						cellData = tableDataArray[row][col];
+
+						tableIsOrigin = false;
+
+						// curPath = tableDataArray[row][col];
+						// console.log(curPath);
 					}
 					if(cellData != null){
+
 						// I AM AN ARRAY OF OBJECTS
 						//if(cellData[0].toString() == "[object Object]"){
 						if(isObject(cellData[0])){
@@ -338,6 +361,7 @@
 						}
 					} else{
 						// table can be edited and afterChange callback will be fired
+
 					}
 
 
@@ -363,11 +387,11 @@
 				  contextMenu: true,
 					columns: rendererArray,
 					afterChange: function(change, source){
-						console.log("********");
-						console.log("table changed (root)");
-						console.log(change);
-						console.log(source);
-						console.log("********");
+						// console.log("********");
+						// console.log("table changed (root)");
+						// console.log(change);
+						// console.log(source);
+						// console.log("********");
 						scope.updateCurrentTable(change, source, hot);
 						scope.updateScopeData(hot);
 					},
@@ -375,13 +399,13 @@
 						scope.clickCell(row, col, true);
 					},
 					afterRemoveRow: function(){
-						console.log("row removed");
+						// console.log("row removed");
 					},
 					afterCreateCol: function(){
-						console.log("col created");
+						// console.log("col created");
 					},
 					afterCreateRow: function(){
-						console.log("row created");
+						// console.log("row created");
 					}
 				});
 
@@ -463,7 +487,9 @@
 				// watches changes on scope.data of directive
 				scope.$watch('data', function(newValue, oldValue) {
 						if (newValue){
+
 							console.log("I can see new data");
+							console.log(newValue);
 							scope.updateTableData(scope.data);
 						}
 				}, true);
