@@ -13,8 +13,9 @@
 				var tableArray = [];
 				var keys = [];
 				var rendererArray = [];
-				var curPath = null;
+				var curPath = [];
 				var tableIsOrigin = false;
+				var clickedTableArray = [];
 
 				for(var i = 0; i < scope.header.length; i++){
 					rendererArray.push({renderer: coverRenderer});
@@ -160,15 +161,18 @@
 
 						}
 
-						// console.log("HELPERARRAYOBJECT");
-						// console.log(helperArrayObject);
-						// console.log("***");
-						// console.log("SCOPEDATA");
-						// console.log(scope.data);
-						// console.log("***");
+						console.log("==========");
+						console.log(curPath);
+						console.log("==========");
 
-						// console.log(table.getColHeader());
-						// console.log(xy);
+
+						console.log("HELPERARRAYOBJECT");
+						console.log(helperArrayObject);
+						console.log("***");
+						console.log("SCOPEDATA");
+						console.log(scope.data);
+						console.log("***");
+
 					}
 
 				};
@@ -295,14 +299,20 @@
 					// destroy all table paths,
 					// if table path is longer than actual clicked table index
 					scope.updateTablePath(clickedTable);
+					clickedTableArray.push(clickedTable);
+
+
+
+
+
 
 					var cellData = null;
 					if(origin){
 						// clear tables if origin table is clicked
 						scope.cleanTables();
 						cellData = tablestructure[row][col];
-						// curPath = tablestructure[row][col];
-						// console.log(curPath);
+						curPath = [];
+
 						if(cellData != null){
 							if(!isObject(cellData[0]) && !isArray(cellData)){
 								tableIsOrigin = true;
@@ -321,14 +331,23 @@
 
 						tableIsOrigin = false;
 
-						// curPath = tableDataArray[row][col];
-						// console.log(curPath);
 					}
 					if(cellData != null){
 
 						// I AM AN ARRAY OF OBJECTS
 						//if(cellData[0].toString() == "[object Object]"){
+
 						if(isObject(cellData[0])){
+							console.log("IN HERE");
+							// if(clickedTableArray[clickedTableArray.length-2] == clickedTable){
+							// 	curPath.pop();
+							// 	curPath.pop();
+							// }
+							var tableArrayLength = tableArray.length;
+							var doubleTableArrayLength = tableArrayLength*2;
+							curPath = curPath.slice(0, doubleTableArrayLength);
+							curPath.push(row);
+							curPath.push(col);
 							// custom headers from json
 							var headkeys = [];
 							var renderers = [];
@@ -343,7 +362,15 @@
 
 							// I AM AN ARRAY
 						} else if(isArray(cellData)){
-
+							// if(clickedTableArray[clickedTableArray.length-2] == clickedTable){
+							// 	curPath.pop();
+							// 	curPath.pop();
+							// }
+							var tableArrayLength = tableArray.length;
+							var doubleTableArrayLength = tableArrayLength*2;
+							curPath = curPath.slice(0, doubleTableArrayLength);
+							curPath.push(row);
+							curPath.push(col);
 							// custom headers from json
 							var headkeys = [];
 							var renderers = [];
@@ -357,13 +384,16 @@
 							var table = scope.createTable(headkeys, null);
 							table.loadData(array);
 						} else{
-							return;
+							var tableArrayLength = tableArray.length;
+							var doubleTableArrayLength = tableArrayLength*2;
+							curPath = curPath.slice(0, doubleTableArrayLength);
+							curPath.push(row);
+							curPath.push(col);
+							// return;
 						}
 					} else{
 						// table can be edited and afterChange callback will be fired
-
 					}
-
 
 
 				};
