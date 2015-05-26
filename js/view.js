@@ -487,9 +487,8 @@
 				// watches changes on scope.data of directive
 				scope.$watch('data', function(newValue, oldValue) {
 						if (newValue){
-
 							console.log("I can see new data");
-							console.log(newValue);
+							// console.log(newValue);
 							scope.updateTableData(scope.data);
 						}
 				}, true);
