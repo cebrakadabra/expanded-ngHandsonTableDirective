@@ -154,21 +154,68 @@
 						if(tableIsOrigin){
 							scope.data = [];
 							scope.data = helperArrayObject;
-							$timeout(function(){
-								scope.$apply();
-							});
+							// $timeout(function(){
+							// 	scope.$apply();
+							// });
 						}else{
+
+							var identifier = [];
+							var i = curPath.length;
+							if(i >= 2){
+								var objectkeys = [];
+								for(k in scope.data[curPath[0]]){
+									objectkeys.push(k);
+								}
+								if(curPath != [] && curPath != undefined && curPath != null){
+										identifier.push(objectkeys[curPath[1]]);
+										if(i <= 2 && i < 4){
+											console.log(scope.data[curPath[0]][identifier[0]]);
+											scope.data[curPath[0]][identifier[0]] = helperArrayObject;
+											// $timeout(function(){
+											// 	scope.$apply();
+											// });
+										}
+								}
+							}
+							if(i >= 4){
+								var objectkeys = [];
+								for(k in scope.data[curPath[0]][identifier[0]][curPath[2]]){
+									objectkeys.push(k);
+								}
+								if(curPath != [] && curPath != undefined && curPath != null){
+										identifier.push(objectkeys[curPath[3]]);
+										if(i >= 4 && i < 6){
+											console.log(scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]]);
+											scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]] = helperArrayObject;
+											// $timeout(function(){
+											// 	scope.$apply();
+											// });
+										}
+								}
+							} else if(i >= 6){
+								// ...
+							}
+							else{
+								// ...
+							}
+
+
+
+
+
+
 
 						}
 
-						console.log("==========");
-						console.log(curPath);
-						console.log("==========");
 
-
-						console.log("HELPERARRAYOBJECT");
-						console.log(helperArrayObject);
-						console.log("***");
+						// console.log("==========");
+						// console.log(curPath);
+						// console.log("==========");
+						//
+						//
+						// console.log("HELPERARRAYOBJECT");
+						// console.log(helperArrayObject);
+						// console.log("***");
 						console.log("SCOPEDATA");
 						console.log(scope.data);
 						console.log("***");
