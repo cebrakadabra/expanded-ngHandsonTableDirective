@@ -212,6 +212,30 @@
 										}
 								}
 							}
+							if(i >= 10){
+								var objectkeys = [];
+								for(k in scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]][curPath[4]][identifier[2]][curPath[6]][identifier[3]][curPath[8]]){
+									objectkeys.push(k);
+								}
+								if(curPath != [] && curPath != undefined && curPath != null){
+										identifier.push(objectkeys[curPath[9]]);
+										if(i >= 10 && i < 12){
+											scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]][curPath[4]][identifier[2]][curPath[6]][identifier[3]][curPath[8]][identifier[4]] = helperArrayObject;
+										}
+								}
+							}
+							if(i >= 12){
+								var objectkeys = [];
+								for(k in scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]][curPath[4]][identifier[2]][curPath[6]][identifier[3]][curPath[8]][identifier[4]][curPath[10]]){
+									objectkeys.push(k);
+								}
+								if(curPath != [] && curPath != undefined && curPath != null){
+										identifier.push(objectkeys[curPath[11]]);
+										if(i >= 10 && i < 12){
+											scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]][curPath[4]][identifier[2]][curPath[6]][identifier[3]][curPath[8]][identifier[4]][curPath[10]][identifier[5]] = helperArrayObject;
+										}
+								}
+							}
 
 
 
