@@ -85,7 +85,7 @@
 						var newVal = change[0][3];
 						var row = change[0][0];
 						var col = change[0][1];
-						curTableDataArray[row][col] = newVal;
+						// curTableDataArray[row][col] = newVal;
 
 						if(isArray(change[0])){
 							if(newVal.charAt(0) == "["){
@@ -155,12 +155,14 @@
 							scope.data = [];
 							scope.data = helperArrayObject;
 							// $timeout(function(){
-							// 	scope.$apply();
+							//
+							// 	scope.$apply;
 							// });
 						}else{
 
 							var identifier = [];
 							var i = curPath.length;
+							// console.log(i);
 							if(i >= 2){
 								var objectkeys = [];
 								for(k in scope.data[curPath[0]]){
@@ -169,11 +171,7 @@
 								if(curPath != [] && curPath != undefined && curPath != null){
 										identifier.push(objectkeys[curPath[1]]);
 										if(i <= 2 && i < 4){
-											console.log(scope.data[curPath[0]][identifier[0]]);
 											scope.data[curPath[0]][identifier[0]] = helperArrayObject;
-											// $timeout(function(){
-											// 	scope.$apply();
-											// });
 										}
 								}
 							}
@@ -185,18 +183,34 @@
 								if(curPath != [] && curPath != undefined && curPath != null){
 										identifier.push(objectkeys[curPath[3]]);
 										if(i >= 4 && i < 6){
-											console.log(scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]]);
 											scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]] = helperArrayObject;
-											// $timeout(function(){
-											// 	scope.$apply();
-											// });
 										}
 								}
-							} else if(i >= 6){
-								// ...
 							}
-							else{
-								// ...
+							if(i >= 6){
+								var objectkeys = [];
+								for(k in scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]][curPath[4]]){
+									objectkeys.push(k);
+								}
+								if(curPath != [] && curPath != undefined && curPath != null){
+										identifier.push(objectkeys[curPath[5]]);
+										if(i >= 6 && i < 8){
+											console.log(scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]][curPath[4]][identifier[2]]);
+											scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]][curPath[4]][identifier[2]] = helperArrayObject;
+										}
+								}
+							}
+							if(i >= 8){
+								var objectkeys = [];
+								for(k in scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]][curPath[4]][identifier[2]][curPath[6]]){
+									objectkeys.push(k);
+								}
+								if(curPath != [] && curPath != undefined && curPath != null){
+										identifier.push(objectkeys[curPath[7]]);
+										if(i >= 8 && i < 10){
+											scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]][curPath[4]][identifier[2]][curPath[6]][identifier[3]] = helperArrayObject;
+										}
+								}
 							}
 
 
@@ -379,13 +393,14 @@
 						var tableArrayLength = tableArray.length;
 						var doubleTableArrayLength = tableArrayLength*2;
 						curPath = curPath.slice(0, doubleTableArrayLength);
-						curPath.push(row);
-						curPath.push(col);
 
 						// I AM AN ARRAY OF OBJECTS
 						//if(cellData[0].toString() == "[object Object]"){
 
 						if(isObject(cellData[0])){
+
+							curPath.push(row);
+							curPath.push(col);
 
 							// custom headers from json
 							var headkeys = [];
@@ -401,6 +416,9 @@
 
 							// I AM AN ARRAY
 						} else if(isArray(cellData)){
+
+							curPath.push(row);
+							curPath.push(col);
 
 							// custom headers from json
 							var headkeys = [];
@@ -420,7 +438,6 @@
 					} else{
 						// table can be edited and afterChange callback will be fired
 					}
-
 
 				};
 
