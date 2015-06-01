@@ -1,0 +1,78 @@
+[
+  {
+    "id": 1,
+    "name": "Chris",
+    "address": "Patternstreet",
+    "number": "17",
+    "array": ["a", "b", "c"],
+    "object": [
+      {
+        "id": 1,
+        "name": "Object 1",
+        "animal": "Cat",
+        "food": ["whiskas", "sheba"],
+        "anyobject": [
+          {
+            "id": 1,
+            "name": "third level",
+            "hobby": "football",
+            "items": ["abc", "def", "ghi"],
+            "objectagain": [
+              {
+                "id": 1,
+                "name": "Christoph"
+              },
+              {
+                "id": 2,
+                "name": "Steve"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "name": "third level2",
+            "hobby": "running",
+            "items": ["abc", "def"],
+            "objectagain": [
+              {
+                "id": 1,
+                "name": "Men"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Object 2",
+        "animal": "Dog"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Peter",
+    "address": "Patternstreet",
+    "number": "20",
+    "array": ["a", "b", "c", "d"],
+    "object": [
+      {
+        "test": "hello you 2",
+        "name": "succeeded"
+      }
+    ]
+
+  },
+  {
+    "id": 3,
+    "name": "Sandra",
+    "address": "Patternstreet",
+    "number": "21",
+    "array": ["a", "b"],
+    "object": [
+      {
+        "test": "hello you 3"
+      }
+    ]
+  }
+]

@@ -16,6 +16,8 @@
 				var curPath = [];
 				var tableIsOrigin = false;
 				var clickedTableArray = [];
+				var initTableArray = [];
+				var headerarray = [];
 
 
 				var pos = {x: 0, y: 0};
@@ -27,44 +29,74 @@
 				    mouse.y = e.clientY || e.pageY
 				}, false);
 
+
+// ******************
 				// set initial headers manually if not set
-				if(scope.header === "" || scope.header === undefined){
-					var headerarray = [];
+			scope.initialHeaderSettings  = function(data){
+					if(scope.header === undefined || scope.header.length === 0){
+
 					for(key in scope.data[0]){
 						headerarray.push(key);
 						rendererArray.push({renderer: coverRenderer});
 					}
-					scope.header = headerarray;
-
+					console.log("HEADERARRAY LENGTH: "+headerarray.length);
+					console.log("data LENGTH: "+data[0].length);
 				} else{
 					for(var i = 0; i < scope.header.length; i++){
 						rendererArray.push({renderer: coverRenderer});
 					}
+					headerarray = scope.header;
 				}
+			};
 
 
 // ******************
 				// updates tableData on changes of the scope
-				scope.updateTableData = function(data){
+				scope.updateTableData = function(data, table){
+
 					var input = scope.initialData(data);
-					hot.loadData(input);
+					console.log(input);
+					table.loadData(input);
+					var instance = table.getInstance();
+					instance.render();
+					// if(input.length > 0){
+					// 	var actualtable = input;
+					// 	var maxlength = actualtable[0].length;
+					// 	var lastrow = actualtable[actualtable.length-1];
+					// 	if(!jQuery.isEmptyObject(lastrow)){
+					// 		var lr = lastrow.slice(0, maxlength);
+					// 		actualtable[actualtable.length-1] = lr;
+					// 		console.log(actualtable);
+					// 		// table.loadData(actualtable);
+					// 	}
+					// }
+
+
 				};
 
 // ******************
 				// parses the initial data from the isolated scope
 				scope.initialData = function(data){
 					tablestructure = [];
-
 					for(var i = 0; i < data.length; i++){
 						tablestructure.push([]);
 						var cnt = 0;
 						for(key in data[i]){
 							keys.push(key);
-							tablestructure[i][cnt] = data[i][key];
-							cnt++;
+							if(data[i][key] != null){
+								tablestructure[i][cnt] = data[i][key];
+								cnt++;
+							}
+
 						}
 					}
-
+					// for(var i = 0; i < tablestructure.length; i++){
+					// 	if(i !== 0){
+					// 		if(tablestructure[i-1] < tablestructure[i]){}
+					// 	}
+					// }
+					console.log("Tablestructure");
+					console.log(tablestructure.length);
 					return tablestructure;
 				}
 
@@ -492,36 +524,48 @@
 
 // ******************
 				// create initial Handsontable
-				var placeholderArray = [[]];
-				var hot = new Handsontable(element[0], {
-				  data: placeholderArray,
-				  minSpareRows: 1,
-				  rowHeaders: false,
-					colHeaders: scope.header,
-				  contextMenu: true,
-					columns: rendererArray,
-					afterChange: function(change, source){
-						// console.log("********");
-						// console.log("table changed (root)");
-						// console.log(change);
-						// console.log(source);
-						// console.log("********");
-						scope.updateCurrentTable(change, source, hot);
-						scope.updateScopeData(hot);
-					},
-					afterSelectionEnd: function(row, col){
-						scope.clickCell(row, col, true);
-					},
-					afterRemoveRow: function(){
-						// console.log("row removed");
-					},
-					afterCreateCol: function(){
-						// console.log("col created");
-					},
-					afterCreateRow: function(){
-						// console.log("row created");
-					}
-				});
+				var hot = null;
+				scope.initFirstTable = function(){
+					// reset initial input tag
+					element[0].innerHTML = '';
+					var placeholderArray = [[]];
+
+					// console.log(initTableArray[0]);
+					hot = new Handsontable(element[0], {
+					  data: placeholderArray,
+					  minSpareRows: 1,
+					  rowHeaders: false,
+						colHeaders: headerarray,
+					  contextMenu: true,
+						columns: rendererArray,
+						afterChange: function(change, source){
+							// console.log("********");
+							// console.log("table changed (root)");
+							// console.log(change);
+							// console.log(source);
+							// console.log("********");
+							scope.updateCurrentTable(change, source, hot);
+							scope.updateScopeData(hot);
+						},
+						afterSelectionEnd: function(row, col){
+							scope.clickCell(row, col, true);
+						},
+						afterRemoveRow: function(){
+							// console.log("row removed");
+						},
+						afterCreateCol: function(){
+							// console.log("col created");
+						},
+						afterCreateRow: function(){
+							// console.log("row created");
+						}
+					});
+					// initTableArray.pop();
+					// initTableArray.push(hot);
+
+				// 	return hot;
+				};
+
 
 
 // ******************
@@ -594,16 +638,43 @@
 			    return td;
 			  }
 
-
+				scope.resetInitialTable = function(){
+					if(initTableArray.length > 1){
+						initTableArray[0].destroy();
+						initTableArray.splice(0, 1);
+					}
+				}
 
 
 // ******************
 				// watches changes on scope.data of directive
+				var first = true;
 				scope.$watch('data', function(newValue, oldValue) {
 						if (newValue){
 							console.log("I can see new data");
-							// console.log(newValue);
-							scope.updateTableData(scope.data);
+							console.log("NEW VALUES");
+							console.log(newValue);
+							if(newValue[0] !== undefined && newValue[0] !== null){
+								if(first){
+									first = false;
+									scope.initialHeaderSettings(newValue);
+									scope.initFirstTable();
+									scope.updateTableData(newValue, hot);
+								} else{
+									scope.updateTableData(newValue, hot);
+								}
+
+
+
+							}
+
+							// scope.resetInitialTable();
+							// scope.initialHeaderSettings(newValue);
+							// var table = scope.initFirstTable();
+
+
+
+
 						}
 				}, true);
 
