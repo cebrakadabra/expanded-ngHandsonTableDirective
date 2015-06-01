@@ -10,4 +10,4 @@ The Directive is located in js/view.js.
 The repo contains a whole AngularJS example. You only have to start it on a (local) Webserver
 
 ## Working example
-[Absolute workingExample link](http://cebra-webdesign.at/cebradev/handson/#/handsonFull)
+[Online Demo](http://cebra-webdesign.at/cebradev/handson/#/handsonFull)
