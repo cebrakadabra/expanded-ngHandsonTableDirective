@@ -17,9 +17,7 @@
 				var tableIsOrigin = false;
 				var clickedTableArray = [];
 
-				for(var i = 0; i < scope.header.length; i++){
-					rendererArray.push({renderer: coverRenderer});
-				}
+
 				var pos = {x: 0, y: 0};
 				var mouse = {x: 0, y: 0};
 				var oldLeft = 0, oldTop = 0;
@@ -28,6 +26,21 @@
 				    mouse.x = e.clientX || e.pageX;
 				    mouse.y = e.clientY || e.pageY
 				}, false);
+
+				// set initial headers manually if not set
+				if(scope.header === "" || scope.header === undefined){
+					var headerarray = [];
+					for(key in scope.data[0]){
+						headerarray.push(key);
+						rendererArray.push({renderer: coverRenderer});
+					}
+					scope.header = headerarray;
+
+				} else{
+					for(var i = 0; i < scope.header.length; i++){
+						rendererArray.push({renderer: coverRenderer});
+					}
+				}
 
 
 // ******************
@@ -153,7 +166,12 @@
 
 						if(tableIsOrigin){
 							scope.data = [];
-							scope.data = helperArrayObject;
+							// $timeout(function(){
+							// scope.$apply(function(){
+								scope.data = helperArrayObject;
+      				//});
+							// });
+
 							// $timeout(function(){
 							//
 							// 	scope.$apply;
@@ -195,7 +213,6 @@
 								if(curPath != [] && curPath != undefined && curPath != null){
 										identifier.push(objectkeys[curPath[5]]);
 										if(i >= 6 && i < 8){
-											console.log(scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]][curPath[4]][identifier[2]]);
 											scope.data[curPath[0]][identifier[0]][curPath[2]][identifier[1]][curPath[4]][identifier[2]] = helperArrayObject;
 										}
 								}

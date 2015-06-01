@@ -90,7 +90,7 @@ expHandsonTable.controller('handsonFullCtrl', ['$scope', '$location', '$timeout'
 		}
 	];
 
-	$scope.headertitles = ["ID", "Name", "Address", "Street number", "Items", "Object"];
+	// $scope.headertitles = ["ID", "Name", "Address", "Street number", "Items", "Object"];
 	// $scope.params = ["id", "name", "address", "number", "array", "object"];
 
 	// $timeout(function(){
