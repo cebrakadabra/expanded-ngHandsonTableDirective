@@ -22,7 +22,7 @@ expHandsonTable.factory('DataService', ['$interval', '$filter', '$http', '$compi
 			});
 			console.log("SERVICE datastructure");
 			console.log(datastructure);
-		}, 1000);
+		}, 500);
 
 		$timeout(function(){
 			datastructure.push({
@@ -39,7 +39,7 @@ expHandsonTable.factory('DataService', ['$interval', '$filter', '$http', '$compi
 			});
 			console.log("SERVICE datastructure");
 			console.log(datastructure);
-		}, 2000);
+		}, 1000);
   }).
   error(function(data, status, headers, config) {
     console.log("ERROR retrieving data");

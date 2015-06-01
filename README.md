@@ -8,3 +8,6 @@ expanded version of: http://handsontable.com/ - A custom json structure Editor (
 The Directive is located in js/view.js.
 
 The repo contains a whole AngularJS example. You only have to start it on a (local) Webserver
+
+## Working example
+[Absolute workingExample link](http://cebra-webdesign.at/cebradev/handson/#/handsonFull)
