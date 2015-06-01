@@ -24,7 +24,6 @@
 				var mouse = {x: 0, y: 0};
 				var oldLeft = 0, oldTop = 0;
 				document.addEventListener('mousemove', function(e){
-					//	console.log(e.target.parent());
 				    mouse.x = e.clientX || e.pageX;
 				    mouse.y = e.clientY || e.pageY
 				}, false);
@@ -39,8 +38,6 @@
 						headerarray.push(key);
 						rendererArray.push({renderer: coverRenderer});
 					}
-					console.log("HEADERARRAY LENGTH: "+headerarray.length);
-					console.log("data LENGTH: "+data[0].length);
 				} else{
 					for(var i = 0; i < scope.header.length; i++){
 						rendererArray.push({renderer: coverRenderer});
@@ -53,25 +50,8 @@
 // ******************
 				// updates tableData on changes of the scope
 				scope.updateTableData = function(data, table){
-
 					var input = scope.initialData(data);
-					console.log(input);
 					table.loadData(input);
-					var instance = table.getInstance();
-					instance.render();
-					// if(input.length > 0){
-					// 	var actualtable = input;
-					// 	var maxlength = actualtable[0].length;
-					// 	var lastrow = actualtable[actualtable.length-1];
-					// 	if(!jQuery.isEmptyObject(lastrow)){
-					// 		var lr = lastrow.slice(0, maxlength);
-					// 		actualtable[actualtable.length-1] = lr;
-					// 		console.log(actualtable);
-					// 		// table.loadData(actualtable);
-					// 	}
-					// }
-
-
 				};
 
 // ******************
@@ -90,13 +70,6 @@
 
 						}
 					}
-					// for(var i = 0; i < tablestructure.length; i++){
-					// 	if(i !== 0){
-					// 		if(tablestructure[i-1] < tablestructure[i]){}
-					// 	}
-					// }
-					console.log("Tablestructure");
-					console.log(tablestructure.length);
 					return tablestructure;
 				}
 
@@ -121,8 +94,6 @@
 // ******************
 				// update table on cell change
 				scope.updateCurrentTable = function(change, source, table){
-
-					// console.log(change);
 
 					if(change != null){
 
@@ -151,9 +122,7 @@
 							curTableDataArray[row][col] = newVal;
 						}
 						var rerender = table.getInstance();
-						// console.log(rerender);
 						rerender.render();
-						// table.loadData(tableArray);
 					}
 
 			};
@@ -212,7 +181,6 @@
 
 							var identifier = [];
 							var i = curPath.length;
-							// console.log(i);
 							if(i >= 2){
 								var objectkeys = [];
 								for(k in scope.data[curPath[0]]){
@@ -652,8 +620,6 @@
 				scope.$watch('data', function(newValue, oldValue) {
 						if (newValue){
 							console.log("I can see new data");
-							console.log("NEW VALUES");
-							console.log(newValue);
 							if(newValue[0] !== undefined && newValue[0] !== null){
 								if(first){
 									first = false;
@@ -663,17 +629,7 @@
 								} else{
 									scope.updateTableData(newValue, hot);
 								}
-
-
-
 							}
-
-							// scope.resetInitialTable();
-							// scope.initialHeaderSettings(newValue);
-							// var table = scope.initFirstTable();
-
-
-
 
 						}
 				}, true);
