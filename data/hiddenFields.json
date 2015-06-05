@@ -1,0 +1,31 @@
+[
+  {
+    "id": true,
+    "name": true,
+    "address": true,
+    "number": true,
+    "array": true,
+    "object": [
+      {
+        "id": true,
+        "name": true,
+        "animal": true,
+        "food": true,
+        "anyobject": [
+          {
+            "id": true,
+            "name": true,
+            "hobby": true,
+            "items": true,
+            "objectagain": [
+              {
+                "id": true,
+                "name": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

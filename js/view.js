@@ -6,7 +6,8 @@
       transclude : false,
       scope: {
 				data: "=",
-				header: "="
+				header: "=",
+				hiddenfields: "="
       },
       link : function(scope, element, attrs) {
 				var tablestructure = [];
@@ -31,17 +32,21 @@
 
 // ******************
 				// set initial headers manually if not set
-			scope.initialHeaderSettings  = function(data){
-					if(scope.header === undefined || scope.header.length === 0){
+			scope.initialHeaderSettings  = function(data, hiddenHeader){
+				for(var i = 0; i < hiddenHeader.length; i++){
+					rendererArray.push({data: hiddenHeader[i].data, renderer: coverRenderer});
+				}
 
+				if(scope.header === undefined || scope.header.length === 0){
+					var helperArray = [];
 					for(key in scope.data[0]){
-						headerarray.push(key);
-						rendererArray.push({renderer: coverRenderer});
+						helperArray.push(key);
 					}
+					for(var i = 0; i < hiddenHeader.length; i++){
+							headerarray.push(helperArray[hiddenHeader[i].data]);
+					}
+
 				} else{
-					for(var i = 0; i < scope.header.length; i++){
-						rendererArray.push({renderer: coverRenderer});
-					}
 					headerarray = scope.header;
 				}
 			};
@@ -402,6 +407,10 @@
 					// if table path is longer than actual clicked table index
 					scope.updateTablePath(clickedTable);
 
+					var hiddenCols = scope.parseHiddenFields(scope.hiddenfields);
+					console.log("HIDDEN");
+					console.log(hiddenCols);
+
 					var cellData = null;
 					if(origin){
 						// clear tables if origin table is clicked
@@ -528,10 +537,6 @@
 							// console.log("row created");
 						}
 					});
-					// initTableArray.pop();
-					// initTableArray.push(hot);
-
-				// 	return hot;
 				};
 
 
@@ -601,17 +606,26 @@
 			      Handsontable.renderers.TextRenderer.apply(this, arguments);
 			    }
 
-					// console.log("TD: ");
-					// console.log(td);
 			    return td;
 			  }
 
-				scope.resetInitialTable = function(){
-					if(initTableArray.length > 1){
-						initTableArray[0].destroy();
-						initTableArray.splice(0, 1);
+
+// ******************
+				// parse the input structure for hidden columns
+				scope.parseHiddenFields = function(fields){
+
+
+					var generateHiddenStructure = [];
+					var hiddenStructure = fields[0];
+					var i = 0;
+					for(key in hiddenStructure){
+						if(hiddenStructure[key] != false){
+							generateHiddenStructure.push({data: i});
+						}
+						i++;
 					}
-				}
+					return generateHiddenStructure;
+				};
 
 
 // ******************
@@ -621,17 +635,28 @@
 						if (newValue){
 							console.log("I can see new data");
 							if(newValue[0] !== undefined && newValue[0] !== null){
+								console.log("NEW");
+								console.log(newValue);
 								if(first){
 									first = false;
-									scope.initialHeaderSettings(newValue);
+									var hiddenCols = scope.parseHiddenFields(scope.hiddenfields);
+									scope.initialHeaderSettings(newValue, hiddenCols);
 									scope.initFirstTable();
 									scope.updateTableData(newValue, hot);
 								} else{
 									scope.updateTableData(newValue, hot);
 								}
 							}
-
 						}
+				}, true);
+
+
+// ******************
+				// watches changes on scope.hiddenfields of directive
+				// *not needed
+				scope.$watch('hiddenfields', function(newValue, oldValue){
+					// console.log("HIDDENFIELDS");
+					// console.log(newValue);
 				}, true);
 
 
