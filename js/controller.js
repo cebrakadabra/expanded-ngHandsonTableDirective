@@ -15,12 +15,6 @@ expHandsonTable.controller('handsonFullCtrl', ['$scope', '$location', '$timeout'
 	$scope.items = [];
 	$scope.items = DataService.datastructure;
 
-
-	$timeout(function(){
-		console.log("aksdjköasdsa");
-		console.log($scope.hiddenfields);
-	}, 3000);
-
 	// $scope.headertitles = ["ID", "Name", "Address", "Street number", "Items", "Object"];
 	// $scope.params = ["id", "name", "address", "number", "array", "object"];
 
@@ -31,14 +25,10 @@ expHandsonTable.controller('handsonFullCtrl', ['$scope', '$location', '$timeout'
 			"address": "Patternstreet",
 			"number": "21",
 			"array": ["a", "b", "c"],
-			"object": [
-				{
-					"test": "hello you 4"
-				}
-			]
+			"object": null
 		});
 		console.log("data added");
-		
+
 	}, 500);
 
 	$timeout(function(){
@@ -48,11 +38,7 @@ expHandsonTable.controller('handsonFullCtrl', ['$scope', '$location', '$timeout'
 			"address": "Patternstreet",
 			"number": "21",
 			"array": ["a", "b", "c"],
-			"object": [
-				{
-					"test": "hello you 4"
-				}
-			]
+			"object": null
 		});
 		console.log("data added");
 	}, 1000);

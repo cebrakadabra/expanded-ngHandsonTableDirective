@@ -57,8 +57,11 @@
     "array": ["a", "b", "c", "d"],
     "object": [
       {
-        "test": "hello you 2",
-        "name": "succeeded"
+        "id": 1,
+        "name": "Object 1",
+        "animal": "Dog",
+        "food": ["whiskas", "sheba"],
+        "anyobject": null
       }
     ]
 
@@ -71,7 +74,11 @@
     "array": ["a", "b"],
     "object": [
       {
-        "test": "hello you 3"
+        "id": 1,
+        "name": "Object 1",
+        "animal": "Mouse",
+        "food": ["whiskas", "sheba"],
+        "anyobject": null
       }
     ]
   }

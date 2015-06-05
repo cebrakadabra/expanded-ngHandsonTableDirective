@@ -19,6 +19,7 @@
 				var clickedTableArray = [];
 				var initTableArray = [];
 				var headerarray = [];
+				var globalFieldskipper = 0;
 
 
 				var pos = {x: 0, y: 0};
@@ -259,26 +260,27 @@
 								}
 							}
 
-
-
-
-
-
-
 						}
 
+// ------------------------------------------------------------------------------------------------------------------
+// 				ENTRY POINT FOR SAVING DATA IN DATABASE AGAIN
+// ==================================================================================================================
+// ******************************************************************************************************************
+// ==================================================================================================================
+// ------------------------------------------------------------------------------------------------------------------
 
-						// console.log("==========");
-						// console.log(curPath);
-						// console.log("==========");
-						//
-						//
-						// console.log("HELPERARRAYOBJECT");
-						// console.log(helperArrayObject);
-						// console.log("***");
-						console.log("SCOPEDATA");
-						console.log(scope.data);
-						console.log("***");
+							console.log("SCOPEDATA NEEDS TO BE STORED HERE");
+							console.log(scope.data);
+							console.log("************************");
+
+// ------------------------------------------------------------------------------------------------------------------
+// ==================================================================================================================
+// ******************************************************************************************************************
+// ==================================================================================================================
+// ------------------------------------------------------------------------------------------------------------------
+
+
+
 
 					}
 
@@ -310,7 +312,12 @@
 							scope.updateScopeData(hotTable);
 						},
 						afterSelectionEnd: function(row, col){
-							scope.clickCell(row, col, false, hotTable);
+
+							var currTableData = hotTable.getData();
+							globalFieldskipper = currTableData[0].length - renderers.length;
+
+							var newCol = col + globalFieldskipper;
+							scope.clickCell(row, newCol, false, hotTable);
 						},
 						afterRemoveRow: function(){
 							// console.log("row removed");
@@ -324,17 +331,6 @@
 						}
 					});
 
-				// 	var container = document.getElementById("example");
-				// 	var hot = new Handsontable(elem, {
-				// 	data: [[]],
-				// 	colHeaders: true,
-				// 	rowHeaders: true,
-				// 	stretchH: 'all',
-				// 	columnSorting: true,
-				// 	contextMenu: true
-				// });
-				//
-				// 	hot.loadData(data);
 
 // ******************
 					// push it to overall table array
@@ -400,6 +396,56 @@
 				};
 
 // ******************
+				// compares the keysets of two objects
+				scope.compareKeys = function(a, b) {
+				  var aKeys = Object.keys(a).sort();
+				  var bKeys = Object.keys(b).sort();
+				  return JSON.stringify(aKeys) === JSON.stringify(bKeys);
+				};
+
+
+// ******************
+				// returns the hiddenFields for a specific created Table
+				scope.returnSpecificHiddenFields = function(data){
+					var keyArray = [];
+					for(key in data){
+						keyArray.push(key);
+					}
+
+					var setToTrueArray = {};
+					for(var i = 0; i < keyArray.length; i++){
+						var key = keyArray[i];
+						setToTrueArray[key] = true;
+					}
+
+					var hiddenFields = scope.hiddenfields;
+					var hiddenFieldsStructure = function(hiddenFieldData){
+
+						for(key in hiddenFieldData){
+							if(isArray(hiddenFieldData[key])){
+								var array = hiddenFieldData[key];
+								if(isObject(array[0])){
+									if(scope.compareKeys(array[0], setToTrueArray)){
+										// MATCH! keys are matching, this is the array with hidden Colums config we need
+										return array[0];
+									} else{
+										// NO MATCH! go to the next level and find match
+										return hiddenFieldsStructure(array[0]);
+									}
+								}
+
+							}
+						}
+
+					};
+					var hiddenFieldsStructureResult = hiddenFieldsStructure(hiddenFields[0]);
+
+					return hiddenFieldsStructureResult;
+
+
+				};
+
+// ******************
 				// callback event, if cell got clicked
 				scope.clickCell = function(row, col, origin, clickedTable, event){
 
@@ -407,9 +453,7 @@
 					// if table path is longer than actual clicked table index
 					scope.updateTablePath(clickedTable);
 
-					var hiddenCols = scope.parseHiddenFields(scope.hiddenfields);
-					console.log("HIDDEN");
-					console.log(hiddenCols);
+
 
 					var cellData = null;
 					if(origin){
@@ -445,20 +489,44 @@
 						curPath = curPath.slice(0, doubleTableArrayLength);
 
 						// I AM AN ARRAY OF OBJECTS
-						//if(cellData[0].toString() == "[object Object]"){
-
 						if(isObject(cellData[0])){
-
 							curPath.push(row);
 							curPath.push(col);
 
 							// custom headers from json
 							var headkeys = [];
 							var renderers = [];
-							for(key in cellData[0]){
-								headkeys.push(key);
-								renderers.push({renderer: coverRenderer});
+
+
+							// take care of Hidden Fields while creating new Tables
+							// **************** BEGIN
+							var createhiddenFields = scope.returnSpecificHiddenFields(cellData[0]);
+							var helperHiddenFieldArray = [];
+							var i = 0;
+							globalFieldskipper = 0;
+							for(key in createhiddenFields){
+								if(createhiddenFields[key] !== false){
+									helperHiddenFieldArray.push({data: i});
+								} else{
+									globalFieldskipper++;
+								}
+								i++;
 							}
+
+
+							for(var i = 0; i < helperHiddenFieldArray.length; i++){
+								renderers.push({data: helperHiddenFieldArray[i].data, renderer: coverRenderer});
+							}
+
+							var helperArray = [];
+							for(key in cellData[0]){
+								helperArray.push(key);
+							}
+							for(var i = 0; i < helperHiddenFieldArray.length; i++){
+								headkeys.push(helperArray[helperHiddenFieldArray[i].data]);
+							}
+
+							// **************** END
 
 							var table = scope.createTable(headkeys, renderers);
 							var parsedData = scope.parseObjectData(cellData);
@@ -473,6 +541,8 @@
 							// custom headers from json
 							var headkeys = [];
 							var renderers = [];
+
+
 							for(var i = 0; i < cellData.length; i++){
 								headkeys.push(i);
 								renderers.push({renderer: coverRenderer});
@@ -525,7 +595,8 @@
 							scope.updateScopeData(hot);
 						},
 						afterSelectionEnd: function(row, col){
-							scope.clickCell(row, col, true);
+							var newCol = col + globalFieldskipper;
+							scope.clickCell(row, newCol, true);
 						},
 						afterRemoveRow: function(){
 							// console.log("row removed");
@@ -618,9 +689,12 @@
 					var generateHiddenStructure = [];
 					var hiddenStructure = fields[0];
 					var i = 0;
+					globalFieldskipper = 0;
 					for(key in hiddenStructure){
 						if(hiddenStructure[key] != false){
 							generateHiddenStructure.push({data: i});
+						} else{
+							globalFieldskipper++;
 						}
 						i++;
 					}
@@ -635,8 +709,6 @@
 						if (newValue){
 							console.log("I can see new data");
 							if(newValue[0] !== undefined && newValue[0] !== null){
-								console.log("NEW");
-								console.log(newValue);
 								if(first){
 									first = false;
 									var hiddenCols = scope.parseHiddenFields(scope.hiddenfields);
