@@ -464,7 +464,7 @@
 						curPath = [];
 
 						if(cellData != null){
-							if(isObject(cellData[0]) && isArray(cellData)){
+							if(isObject(cellData[0]) || isArray(cellData)){
 								tableIsOrigin = false;
 							}
 						} else{
