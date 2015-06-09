@@ -7,7 +7,9 @@ The Directive is located in js/view.js.
 ```<div handsonfull-Directive data="items" header="headertitles" hiddenfields="hiddenfields"></div>```
 
 ```data``` represents the json structure
+
 ```header``` are custom header titles for the initial table
+
 ```hiddenfields``` is a structure which is located in data/hiddenFields.json. It should set any attribute to display true | false
 
 The repo contains a whole AngularJS example. You only have to start it on a (local) Webserver
