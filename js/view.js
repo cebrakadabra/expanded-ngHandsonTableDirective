@@ -136,7 +136,7 @@
 
 // ******************
 				// updates the scope data, if modifications in the table are made
-				scope.updateScopeData = function(table){
+				scope.updateScopeData = function(table, allheader){
 					// if(changedData != null){
 					// 	var objectIndex = changedData[0][0];
 					// 	var objectItemIndex = changedData[0][1];
@@ -148,10 +148,11 @@
 					// 	// scope.data[objectIndex][keys[objectItemIndex]] = newValue;
 					// }
 					if(table != null){
-
 						var tableData = table.getData();
-						var colHeaders = table.getColHeader();
-
+						var colHeaders = [];
+						for(key in allheader){
+							colHeaders.push(key);
+						}
 
 						var helperArrayObject = [];
 						var currObject = {};
@@ -165,10 +166,9 @@
 								}
 								helperArrayObject[i] = currObject;
 							}
+
 							// remove empty row
 							helperArrayObject.pop();
-						} else{
-							helperArrayObject = tableData[0];
 						}
 
 						if(tableIsOrigin){
@@ -288,7 +288,7 @@
 
 // ******************
 				// creates a new Handsontable
-				scope.createTable = function(customheaders, renderers){
+				scope.createTable = function(customheaders, renderers, allheader){
 
 					// get current position of next generated table
 					scope.positionOfTable();
@@ -309,7 +309,7 @@
 						afterChange: function(change, source){
 							// console.log("table changed");
 							scope.updateCurrentTable(change, source, hotTable);
-							scope.updateScopeData(hotTable);
+							scope.updateScopeData(hotTable, allheader);
 						},
 						afterSelectionEnd: function(row, col){
 
@@ -463,11 +463,11 @@
 						curPath = [];
 
 						if(cellData != null){
-							if(!isObject(cellData[0]) && !isArray(cellData)){
-								tableIsOrigin = true;
-							} else{
+							if(isObject(cellData[0]) && isArray(cellData)){
 								tableIsOrigin = false;
 							}
+						} else{
+								tableIsOrigin = true;
 						}
 
 						// get current position of next generated table
@@ -477,7 +477,6 @@
 						var actualTable = clickedTable;
 						var tableDataArray = actualTable.getData();
 						cellData = tableDataArray[row][col];
-
 						tableIsOrigin = false;
 
 					}
@@ -528,7 +527,7 @@
 
 							// **************** END
 
-							var table = scope.createTable(headkeys, renderers);
+							var table = scope.createTable(headkeys, renderers, createhiddenFields);
 							var parsedData = scope.parseObjectData(cellData);
 							table.loadData(parsedData);
 
@@ -572,7 +571,7 @@
 // ******************
 				// create initial Handsontable
 				var hot = null;
-				scope.initFirstTable = function(){
+				scope.initFirstTable = function(allHeader){
 					// reset initial input tag
 					element[0].innerHTML = '';
 					var placeholderArray = [[]];
@@ -592,7 +591,7 @@
 							// console.log(source);
 							// console.log("********");
 							scope.updateCurrentTable(change, source, hot);
-							scope.updateScopeData(hot);
+							scope.updateScopeData(hot, allHeader);
 						},
 						afterSelectionEnd: function(row, col){
 							var newCol = col + globalFieldskipper;
@@ -713,7 +712,8 @@
 									first = false;
 									var hiddenCols = scope.parseHiddenFields(scope.hiddenfields);
 									scope.initialHeaderSettings(newValue, hiddenCols);
-									scope.initFirstTable();
+									var allHiddenCols = scope.hiddenfields[0];
+									scope.initFirstTable(allHiddenCols);
 									scope.updateTableData(newValue, hot);
 								} else{
 									scope.updateTableData(newValue, hot);

@@ -14,7 +14,7 @@
         "anyobject": [
           {
             "id": true,
-            "name": false,
+            "name": true,
             "hobby": true,
             "items": true,
             "objectagain": [
