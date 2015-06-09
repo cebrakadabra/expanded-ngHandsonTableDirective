@@ -148,41 +148,38 @@
 					// 	// scope.data[objectIndex][keys[objectItemIndex]] = newValue;
 					// }
 					if(table != null){
+
 						var tableData = table.getData();
 						var colHeaders = [];
-						for(key in allheader){
-							colHeaders.push(key);
-						}
-
 						var helperArrayObject = [];
 						var currObject = {};
 
-						if(colHeaders[0] != 0){
-							for(var i = 0; i < tableData.length; i++){
-								helperArrayObject.push({});
-								currObject = {};
-								for(var x = 0; x < colHeaders.length; x++){
-										currObject[colHeaders[x]] = tableData[i][x];
-								}
-								helperArrayObject[i] = currObject;
+						if(tableData[1] !== undefined){
+							for(key in allheader){
+								colHeaders.push(key);
 							}
 
-							// remove empty row
-							helperArrayObject.pop();
+							if(colHeaders[0] != 0){
+								for(var i = 0; i < tableData.length; i++){
+									helperArrayObject.push({});
+									currObject = {};
+									for(var x = 0; x < colHeaders.length; x++){
+											currObject[colHeaders[x]] = tableData[i][x];
+									}
+									helperArrayObject[i] = currObject;
+								}
+
+								// remove empty row
+								helperArrayObject.pop();
+							}
+						} else{
+							helperArrayObject = tableData[0];
 						}
 
 						if(tableIsOrigin){
 							scope.data = [];
-							// $timeout(function(){
-							// scope.$apply(function(){
-								scope.data = helperArrayObject;
-      				//});
-							// });
+							scope.data = helperArrayObject;
 
-							// $timeout(function(){
-							//
-							// 	scope.$apply;
-							// });
 						}else{
 
 							var identifier = [];
@@ -288,7 +285,7 @@
 
 // ******************
 				// creates a new Handsontable
-				scope.createTable = function(customheaders, renderers, allheader){
+				scope.createTable = function(customheaders, renderers, allheader, minsparerows, type){
 
 					// get current position of next generated table
 					scope.positionOfTable();
@@ -300,7 +297,7 @@
 					// create new table
 					var hotTable = new Handsontable(elem, {
 					  data: [[]],
-					  minSpareRows: 1,
+					  minSpareRows: minsparerows,
 					  rowHeaders: false,
 						colHeaders: customheaders,
 						columnSorting: true,
@@ -312,12 +309,16 @@
 							scope.updateScopeData(hotTable, allheader);
 						},
 						afterSelectionEnd: function(row, col){
+							if(type !== "array"){
+								var currTableData = hotTable.getData();
+								globalFieldskipper = currTableData[0].length - renderers.length;
 
-							var currTableData = hotTable.getData();
-							globalFieldskipper = currTableData[0].length - renderers.length;
+								var newCol = col + globalFieldskipper;
+								scope.clickCell(row, newCol, false, hotTable);
+							} else{
+								scope.updateScopeData(hotTable, allheader);
+							}
 
-							var newCol = col + globalFieldskipper;
-							scope.clickCell(row, newCol, false, hotTable);
 						},
 						afterRemoveRow: function(){
 							// console.log("row removed");
@@ -526,8 +527,9 @@
 							}
 
 							// **************** END
-
-							var table = scope.createTable(headkeys, renderers, createhiddenFields);
+							var minsparerows = 1;
+							var type = "object";
+							var table = scope.createTable(headkeys, renderers, createhiddenFields, minsparerows, type);
 							var parsedData = scope.parseObjectData(cellData);
 							table.loadData(parsedData);
 
@@ -549,7 +551,9 @@
 
 							var array = [];
 							array.push(cellData);
-							var table = scope.createTable(headkeys, null);
+							var minsparerows = 0;
+							var type = "array";
+							var table = scope.createTable(headkeys, null, null, minsparerows, type);
 							table.loadData(array);
 						} else{
 							// return;
