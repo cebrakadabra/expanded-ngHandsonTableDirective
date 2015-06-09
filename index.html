@@ -3,19 +3,9 @@
 <head>
 	<meta charset='utf-8'>
 	<title>Expanded ngHandsontable - Editor for custom json Input</title>
-
-
 	<link data-jsfiddle="common" rel="stylesheet" media="screen" href="js/lib/handsontable.full.css">
-	<!--<script data-jsfiddle="common" src="js/lib/handsontable.full.js"></script>-->
 	<script data-jsfiddle="common" src="js/lib/lodash.js"></script>
 	<script src="js/handsontable.full.js"></script>
-	<script>
-
-
-
-
-	</script>
-	<!--<script data-jsfiddle="common" src="js/lib/jsonpath.js"></script>-->
 	<script type="text/javascript" src="vendor/jquery-2.0.3.js"></script>
 	<script type="text/javascript" src="vendor/angular.min.js"></script>
 	<script src="vendor/angular-route.min.js"></script>
@@ -27,19 +17,12 @@
 </head>
 
 <body>
+	<div ng-view ng-controller="MainCtrl"></div>
 
-	<div id="example"></div>
-	<div ng-view ng-controller="MainCtrl">
-
-
-
-</div>
-
-
-<script src="js/app.js"></script>
-<script src="js/controller.js"></script>
-<script src="js/service.js"></script>
-<script src="js/view.js"></script>
+	<script src="js/app.js"></script>
+	<script src="js/controller.js"></script>
+	<script src="js/service.js"></script>
+	<script src="js/view.js"></script>
 
 </body>
 </html>
