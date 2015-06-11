@@ -1,5 +1,5 @@
-/* using handson.full.js */
-/* easier approach to wrap this */
+// using handson.full.js
+// provide an AngularJS Directive with additional functionality
 expHandsonTable.directive('handsonfullDirective', function (){
 	return {
 		restrict : 'EA',
