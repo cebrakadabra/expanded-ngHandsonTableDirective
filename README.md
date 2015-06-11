@@ -16,3 +16,6 @@ The repo contains a whole AngularJS example. You only have to start it on a (loc
 
 ## Working example
 [Online Demo](http://cebra-webdesign.at/cebradev/handson/#/handsonFull)
+
+## Documentation
+```js/docs/view.html``` is a docco documentation for the directive in view.js
