@@ -1,4 +1,4 @@
-// using handson.full.js
+// using handson.full.js to
 // provide an AngularJS Directive with additional functionality
 expHandsonTable.directive('handsonfullDirective', function (){
 	return {
