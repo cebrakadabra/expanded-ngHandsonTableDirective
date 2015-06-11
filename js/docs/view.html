@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>view.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>view.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/* using handson.full.js */</span>
+<span class="hljs-comment">/* easier approach to wrap this */</span>
+expHandsonTable.directive(<span class="hljs-string">'handsonfullDirective'</span>, [<span class="hljs-string">'$timeout'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">$timeout</span>)</span>{
+	<span class="hljs-keyword">return</span> {
+		restrict : <span class="hljs-string">'EA'</span>,
+		transclude : <span class="hljs-literal">false</span>,
+		scope: {
+			data: <span class="hljs-string">"="</span>,
+			header: <span class="hljs-string">"="</span>,
+			hiddenfields: <span class="hljs-string">"="</span>
+		},
+		link : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">scope, element, attrs</span>) </span>{
+			<span class="hljs-keyword">var</span> tablestructure = [];
+			<span class="hljs-keyword">var</span> tableArray = [];
+			<span class="hljs-keyword">var</span> keys = [];
+			<span class="hljs-keyword">var</span> rendererArray = [];
+			<span class="hljs-keyword">var</span> curPath = [];
+			<span class="hljs-keyword">var</span> tableIsOrigin = <span class="hljs-literal">false</span>;
+			<span class="hljs-keyword">var</span> clickedTableArray = [];
+			<span class="hljs-keyword">var</span> initTableArray = [];
+			<span class="hljs-keyword">var</span> headerarray = [];
+			<span class="hljs-keyword">var</span> globalFieldskipper = <span class="hljs-number">0</span>;
+
+			<span class="hljs-keyword">var</span> pos = {x: <span class="hljs-number">0</span>, y: <span class="hljs-number">0</span>};
+			<span class="hljs-keyword">var</span> mouse = {x: <span class="hljs-number">0</span>, y: <span class="hljs-number">0</span>};
+			<span class="hljs-keyword">var</span> oldLeft = <span class="hljs-number">0</span>, oldTop = <span class="hljs-number">0</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>global mousemove listener to get the current mouse position for displaying the preview overlay</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'mousemove'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{
+			    mouse.x = e.clientX || e.pageX;
+			    mouse.y = e.clientY || e.pageY
+			}, <span class="hljs-literal">false</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <hr>
+<p>set initial headers manually if not set</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.initialHeaderSettings  = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data, hiddenHeader</span>)</span>{
+				<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; hiddenHeader.length; i++){
+					rendererArray.push({data: hiddenHeader[i].data, renderer: coverRenderer});
+				}
+
+				<span class="hljs-keyword">if</span>(scope.header === <span class="hljs-literal">undefined</span> || scope.header.length === <span class="hljs-number">0</span>){
+					<span class="hljs-keyword">var</span> helperArray = [];
+					<span class="hljs-keyword">for</span>(key <span class="hljs-keyword">in</span> scope.data[<span class="hljs-number">0</span>]){
+						helperArray.push(key);
+					}
+					<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; hiddenHeader.length; i++){
+							headerarray.push(helperArray[hiddenHeader[i].data]);
+					}
+
+				} <span class="hljs-keyword">else</span>{
+					headerarray = scope.header;
+				}
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <hr>
+<p>updates tableData on changes of the scope</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.updateTableData = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data, table</span>)</span>{
+				<span class="hljs-keyword">var</span> input = scope.initialData(data);
+				table.loadData(input);
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <hr>
+<p>parses the initial data from the isolated scope</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.initialData = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>)</span>{
+				tablestructure = [];
+				<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; data.length; i++){
+					tablestructure.push([]);
+					<span class="hljs-keyword">var</span> cnt = <span class="hljs-number">0</span>;
+					<span class="hljs-keyword">for</span>(key <span class="hljs-keyword">in</span> data[i]){
+						keys.push(key);
+						<span class="hljs-keyword">if</span>(data[i][key] != <span class="hljs-literal">null</span>){
+							tablestructure[i][cnt] = data[i][key];
+							cnt++;
+						}
+
+					}
+				}
+				<span class="hljs-keyword">return</span> tablestructure;
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <hr>
+<p>parses array of objects to array of arrays as input for HandsonTable</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.parseObjectData = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>)</span>{
+				<span class="hljs-keyword">var</span> structure = [];
+
+				<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; data.length; i++){
+					structure.push([]);
+					<span class="hljs-keyword">var</span> cnt = <span class="hljs-number">0</span>;
+					<span class="hljs-keyword">for</span>(key <span class="hljs-keyword">in</span> data[i]){
+						structure[i][cnt] = data[i][key];
+						cnt++;
+					}
+				}
+				<span class="hljs-keyword">return</span> structure;
+
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <hr>
+<p>update table on cell change</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.updateCurrentTable = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">change, source, table</span>)</span>{
+
+				<span class="hljs-keyword">if</span>(change != <span class="hljs-literal">null</span>){
+
+					<span class="hljs-keyword">var</span> curTableDataArray = table.getData();
+					<span class="hljs-keyword">var</span> newVal = change[<span class="hljs-number">0</span>][<span class="hljs-number">3</span>];
+					<span class="hljs-keyword">var</span> row = change[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>];
+					<span class="hljs-keyword">var</span> col = change[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>curTableDataArray[row][col] = newVal;</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+					<span class="hljs-keyword">if</span>(isArray(change[<span class="hljs-number">0</span>])){
+						<span class="hljs-keyword">if</span>(newVal.charAt(<span class="hljs-number">0</span>) == <span class="hljs-string">"["</span>){
+							<span class="hljs-keyword">try</span>{
+								curTableDataArray[row][col] = <span class="hljs-built_in">JSON</span>.parse(newVal);
+							} <span class="hljs-keyword">catch</span>(e){
+								alert(e);
+							}
+
+						} <span class="hljs-keyword">else</span>{
+							curTableDataArray[row][col] = newVal;
+						}
+
+					} <span class="hljs-keyword">else</span>{
+						<span class="hljs-keyword">var</span> newVal = change[<span class="hljs-number">3</span>];
+						<span class="hljs-keyword">var</span> row = change[<span class="hljs-number">0</span>];
+						<span class="hljs-keyword">var</span> col = change[<span class="hljs-number">1</span>];
+						curTableDataArray[row][col] = newVal;
+					}
+					<span class="hljs-keyword">var</span> rerender = table.getInstance();
+					rerender.render();
+				}
+
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <hr>
+<p>updates the scope data, if modifications in the table are made</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.updateScopeData = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">table, allheader</span>)</span>{
+				<span class="hljs-keyword">if</span>(table != <span class="hljs-literal">null</span>){
+
+					<span class="hljs-keyword">var</span> tableData = table.getData();
+					<span class="hljs-keyword">var</span> colHeaders = [];
+					<span class="hljs-keyword">var</span> helperArrayObject = [];
+					<span class="hljs-keyword">var</span> currObject = {};
+
+					<span class="hljs-keyword">if</span>(tableData[<span class="hljs-number">1</span>] !== <span class="hljs-literal">undefined</span>){
+						<span class="hljs-keyword">for</span>(key <span class="hljs-keyword">in</span> allheader){
+							colHeaders.push(key);
+						}
+
+						<span class="hljs-keyword">if</span>(colHeaders[<span class="hljs-number">0</span>] != <span class="hljs-number">0</span>){
+							<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; tableData.length; i++){
+								helperArrayObject.push({});
+								currObject = {};
+								<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> x = <span class="hljs-number">0</span>; x &lt; colHeaders.length; x++){
+										currObject[colHeaders[x]] = tableData[i][x];
+								}
+								helperArrayObject[i] = currObject;
+							}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>remove empty row</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>							helperArrayObject.pop();
+						}
+					} <span class="hljs-keyword">else</span>{
+						helperArrayObject = tableData[<span class="hljs-number">0</span>];
+					}
+
+					<span class="hljs-keyword">if</span>(tableIsOrigin){
+						scope.data = [];
+						scope.data = helperArrayObject;
+
+					}<span class="hljs-keyword">else</span>{
+
+						<span class="hljs-keyword">var</span> identifier = [];
+						<span class="hljs-keyword">var</span> i = curPath.length;
+						<span class="hljs-keyword">if</span>(i &gt;= <span class="hljs-number">2</span>){
+							<span class="hljs-keyword">var</span> objectkeys = [];
+							<span class="hljs-keyword">for</span>(k <span class="hljs-keyword">in</span> scope.data[curPath[<span class="hljs-number">0</span>]]){
+								objectkeys.push(k);
+							}
+							<span class="hljs-keyword">if</span>(curPath != [] &amp;&amp; curPath != <span class="hljs-literal">undefined</span> &amp;&amp; curPath != <span class="hljs-literal">null</span>){
+									identifier.push(objectkeys[curPath[<span class="hljs-number">1</span>]]);
+									<span class="hljs-keyword">if</span>(i &lt;= <span class="hljs-number">2</span> &amp;&amp; i &lt; <span class="hljs-number">4</span>){
+										scope.data[curPath[<span class="hljs-number">0</span>]][identifier[<span class="hljs-number">0</span>]] = helperArrayObject;
+									}
+							}
+						}
+						<span class="hljs-keyword">if</span>(i &gt;= <span class="hljs-number">4</span>){
+							<span class="hljs-keyword">var</span> objectkeys = [];
+							<span class="hljs-keyword">for</span>(k <span class="hljs-keyword">in</span> scope.data[curPath[<span class="hljs-number">0</span>]][identifier[<span class="hljs-number">0</span>]][curPath[<span class="hljs-number">2</span>]]){
+								objectkeys.push(k);
+							}
+							<span class="hljs-keyword">if</span>(curPath != [] &amp;&amp; curPath != <span class="hljs-literal">undefined</span> &amp;&amp; curPath != <span class="hljs-literal">null</span>){
+									identifier.push(objectkeys[curPath[<span class="hljs-number">3</span>]]);
+									<span class="hljs-keyword">if</span>(i &gt;= <span class="hljs-number">4</span> &amp;&amp; i &lt; <span class="hljs-number">6</span>){
+										scope.data[curPath[<span class="hljs-number">0</span>]][identifier[<span class="hljs-number">0</span>]][curPath[<span class="hljs-number">2</span>]][identifier[<span class="hljs-number">1</span>]] = helperArrayObject;
+									}
+							}
+						}
+						<span class="hljs-keyword">if</span>(i &gt;= <span class="hljs-number">6</span>){
+							<span class="hljs-keyword">var</span> objectkeys = [];
+							<span class="hljs-keyword">for</span>(k <span class="hljs-keyword">in</span> scope.data[curPath[<span class="hljs-number">0</span>]][identifier[<span class="hljs-number">0</span>]][curPath[<span class="hljs-number">2</span>]][identifier[<span class="hljs-number">1</span>]][curPath[<span class="hljs-number">4</span>]]){
+								objectkeys.push(k);
+							}
+							<span class="hljs-keyword">if</span>(curPath != [] &amp;&amp; curPath != <span class="hljs-literal">undefined</span> &amp;&amp; curPath != <span class="hljs-literal">null</span>){
+									identifier.push(objectkeys[curPath[<span class="hljs-number">5</span>]]);
+									<span class="hljs-keyword">if</span>(i &gt;= <span class="hljs-number">6</span> &amp;&amp; i &lt; <span class="hljs-number">8</span>){
+										scope.data[curPath[<span class="hljs-number">0</span>]][identifier[<span class="hljs-number">0</span>]][curPath[<span class="hljs-number">2</span>]][identifier[<span class="hljs-number">1</span>]][curPath[<span class="hljs-number">4</span>]][identifier[<span class="hljs-number">2</span>]] = helperArrayObject;
+									}
+							}
+						}
+						<span class="hljs-keyword">if</span>(i &gt;= <span class="hljs-number">8</span>){
+							<span class="hljs-keyword">var</span> objectkeys = [];
+							<span class="hljs-keyword">for</span>(k <span class="hljs-keyword">in</span> scope.data[curPath[<span class="hljs-number">0</span>]][identifier[<span class="hljs-number">0</span>]][curPath[<span class="hljs-number">2</span>]][identifier[<span class="hljs-number">1</span>]][curPath[<span class="hljs-number">4</span>]][identifier[<span class="hljs-number">2</span>]][curPath[<span class="hljs-number">6</span>]]){
+								objectkeys.push(k);
+							}
+							<span class="hljs-keyword">if</span>(curPath != [] &amp;&amp; curPath != <span class="hljs-literal">undefined</span> &amp;&amp; curPath != <span class="hljs-literal">null</span>){
+									identifier.push(objectkeys[curPath[<span class="hljs-number">7</span>]]);
+									<span class="hljs-keyword">if</span>(i &gt;= <span class="hljs-number">8</span> &amp;&amp; i &lt; <span class="hljs-number">10</span>){
+										scope.data[curPath[<span class="hljs-number">0</span>]][identifier[<span class="hljs-number">0</span>]][curPath[<span class="hljs-number">2</span>]][identifier[<span class="hljs-number">1</span>]][curPath[<span class="hljs-number">4</span>]][identifier[<span class="hljs-number">2</span>]][curPath[<span class="hljs-number">6</span>]][identifier[<span class="hljs-number">3</span>]] = helperArrayObject;
+									}
+							}
+						}
+						<span class="hljs-keyword">if</span>(i &gt;= <span class="hljs-number">10</span>){
+							<span class="hljs-keyword">var</span> objectkeys = [];
+							<span class="hljs-keyword">for</span>(k <span class="hljs-keyword">in</span> scope.data[curPath[<span class="hljs-number">0</span>]][identifier[<span class="hljs-number">0</span>]][curPath[<span class="hljs-number">2</span>]][identifier[<span class="hljs-number">1</span>]][curPath[<span class="hljs-number">4</span>]][identifier[<span class="hljs-number">2</span>]][curPath[<span class="hljs-number">6</span>]][identifier[<span class="hljs-number">3</span>]][curPath[<span class="hljs-number">8</span>]]){
+								objectkeys.push(k);
+							}
+							<span class="hljs-keyword">if</span>(curPath != [] &amp;&amp; curPath != <span class="hljs-literal">undefined</span> &amp;&amp; curPath != <span class="hljs-literal">null</span>){
+									identifier.push(objectkeys[curPath[<span class="hljs-number">9</span>]]);
+									<span class="hljs-keyword">if</span>(i &gt;= <span class="hljs-number">10</span> &amp;&amp; i &lt; <span class="hljs-number">12</span>){
+										scope.data[curPath[<span class="hljs-number">0</span>]][identifier[<span class="hljs-number">0</span>]][curPath[<span class="hljs-number">2</span>]][identifier[<span class="hljs-number">1</span>]][curPath[<span class="hljs-number">4</span>]][identifier[<span class="hljs-number">2</span>]][curPath[<span class="hljs-number">6</span>]][identifier[<span class="hljs-number">3</span>]][curPath[<span class="hljs-number">8</span>]][identifier[<span class="hljs-number">4</span>]] = helperArrayObject;
+									}
+							}
+						}
+						<span class="hljs-keyword">if</span>(i &gt;= <span class="hljs-number">12</span>){
+							<span class="hljs-keyword">var</span> objectkeys = [];
+							<span class="hljs-keyword">for</span>(k <span class="hljs-keyword">in</span> scope.data[curPath[<span class="hljs-number">0</span>]][identifier[<span class="hljs-number">0</span>]][curPath[<span class="hljs-number">2</span>]][identifier[<span class="hljs-number">1</span>]][curPath[<span class="hljs-number">4</span>]][identifier[<span class="hljs-number">2</span>]][curPath[<span class="hljs-number">6</span>]][identifier[<span class="hljs-number">3</span>]][curPath[<span class="hljs-number">8</span>]][identifier[<span class="hljs-number">4</span>]][curPath[<span class="hljs-number">10</span>]]){
+								objectkeys.push(k);
+							}
+							<span class="hljs-keyword">if</span>(curPath != [] &amp;&amp; curPath != <span class="hljs-literal">undefined</span> &amp;&amp; curPath != <span class="hljs-literal">null</span>){
+									identifier.push(objectkeys[curPath[<span class="hljs-number">11</span>]]);
+									<span class="hljs-keyword">if</span>(i &gt;= <span class="hljs-number">10</span> &amp;&amp; i &lt; <span class="hljs-number">12</span>){
+										scope.data[curPath[<span class="hljs-number">0</span>]][identifier[<span class="hljs-number">0</span>]][curPath[<span class="hljs-number">2</span>]][identifier[<span class="hljs-number">1</span>]][curPath[<span class="hljs-number">4</span>]][identifier[<span class="hljs-number">2</span>]][curPath[<span class="hljs-number">6</span>]][identifier[<span class="hljs-number">3</span>]][curPath[<span class="hljs-number">8</span>]][identifier[<span class="hljs-number">4</span>]][curPath[<span class="hljs-number">10</span>]][identifier[<span class="hljs-number">5</span>]] = helperArrayObject;
+									}
+							}
+						}
+					};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <hr>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <pre><code>            ENTRY POINT FOR SAVING DATA IN DATABASE AGAIN
+</code></pre><p>=============================================================</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <h1 id="-"><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong>*</strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <hr>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+				<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"SCOPEDATA NEEDS TO BE STORED HERE"</span>);
+				<span class="hljs-built_in">console</span>.log(scope.data);
+				<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"************************"</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <hr>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>=============================================================</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h1 id="-"><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong>*</strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <hr>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+				}
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <hr>
+<p>creates a new Handsontable</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.createTable = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">customheaders, renderers, allheader, minsparerows, type</span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>get current position of next generated table</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				scope.positionOfTable();
+
+				<span class="hljs-keyword">var</span> uniqid = <span class="hljs-built_in">Date</span>.now();
+				element.append(<span class="hljs-string">"&lt;div id="</span>+uniqid+<span class="hljs-string">" style='position: fixed; left: "</span>+pos.x+<span class="hljs-string">"px; top: "</span>+pos.y+<span class="hljs-string">"px;'&gt;&lt;/div&gt;"</span>);
+				<span class="hljs-keyword">var</span> elem = <span class="hljs-built_in">document</span>.getElementById(uniqid);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>create new table</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">var</span> hotTable = <span class="hljs-keyword">new</span> Handsontable(elem, {
+					data: [[]],
+					minSpareRows: minsparerows,
+					rowHeaders: <span class="hljs-literal">false</span>,
+					colHeaders: customheaders,
+					columnSorting: <span class="hljs-literal">true</span>,
+				  contextMenu: <span class="hljs-literal">true</span>,
+					columns: renderers,
+					afterChange: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">change, source</span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>after Change Event - updates table and scope.data</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						scope.updateCurrentTable(change, source, hotTable);
+						scope.updateScopeData(hotTable, allheader);
+					},
+					afterSelectionEnd: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row, col</span>)</span>{
+						<span class="hljs-keyword">if</span>(type !== <span class="hljs-string">"array"</span>){
+							<span class="hljs-keyword">var</span> currTableData = hotTable.getData();
+							globalFieldskipper = currTableData[<span class="hljs-number">0</span>].length - renderers.length;
+
+							<span class="hljs-keyword">var</span> newCol = col + globalFieldskipper;
+							scope.clickCell(row, newCol, <span class="hljs-literal">false</span>, hotTable);
+						} <span class="hljs-keyword">else</span>{
+							scope.updateScopeData(hotTable, allheader);
+						}
+
+					},
+					afterRemoveRow: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>fires if row got removed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					},
+					afterCreateCol: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>fires if col got created</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					},
+					afterCreateRow: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>fires after row got created</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+					}
+				});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>push it to overall table array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				tableArray.push(hotTable);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>return current table</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">return</span> hotTable;
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <hr>
+<p>cleans up all tables if origin table was clicked</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.cleanTables = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				<span class="hljs-keyword">if</span>(tableArray.length &gt; <span class="hljs-number">0</span>){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>Clean up tables, start from origin</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; tableArray.length; i++){
+						tableArray[i].destroy();
+					}
+					tableArray = [];
+				}
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <hr>
+<p>destroy all table paths,
+if table path is longer than actual clicked table index</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.updateTablePath = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">clickedTable</span>)</span>{
+				<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = tableArray.length-<span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; i--){
+					<span class="hljs-keyword">if</span>(clickedTable != tableArray[i]){
+						tableArray[i].destroy();
+						tableArray.pop();
+					} <span class="hljs-keyword">else</span>{
+						<span class="hljs-keyword">break</span>;
+					}
+				}
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <hr>
+<p>get current position of next generated table</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.positionOfTable = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+				pos.x = <span class="hljs-number">0</span>;
+				pos.y = <span class="hljs-number">0</span>;
+				<span class="hljs-keyword">var</span> current = $(<span class="hljs-string">"td.current"</span>);
+				<span class="hljs-keyword">var</span> left = <span class="hljs-number">0</span>;
+				<span class="hljs-keyword">var</span> top = <span class="hljs-number">0</span>;
+				<span class="hljs-keyword">var</span> height = <span class="hljs-number">0</span>;
+				<span class="hljs-keyword">var</span> clickOffset = <span class="hljs-number">50</span>;
+				<span class="hljs-keyword">var</span> maxX = mouse.x + clickOffset;
+				<span class="hljs-keyword">var</span> minX = mouse.x - clickOffset;
+				<span class="hljs-keyword">var</span> minY = mouse.y - clickOffset;
+				<span class="hljs-keyword">var</span> maxY = mouse.y + clickOffset;
+
+				<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; current.length; i++){
+					<span class="hljs-keyword">var</span> offset = $(current[i]).offset();
+					left = offset.left;
+					top = offset.top;
+					height = current[i].offsetHeight;
+				}
+
+				<span class="hljs-keyword">if</span>((left &lt; maxX) &amp;&amp; (left &gt; minX) &amp;&amp; (top &lt; maxY) &amp;&amp; (top &gt; minY)){
+					pos.x = left;
+					pos.y = top + height;
+				}
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <hr>
+<p>compares the keysets of two objects</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.compareKeys = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a, b</span>) </span>{
+			  <span class="hljs-keyword">var</span> aKeys = <span class="hljs-built_in">Object</span>.keys(a).sort();
+			  <span class="hljs-keyword">var</span> bKeys = <span class="hljs-built_in">Object</span>.keys(b).sort();
+			  <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.stringify(aKeys) === <span class="hljs-built_in">JSON</span>.stringify(bKeys);
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <hr>
+<p>returns the hiddenFields for a specific created Table</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.returnSpecificHiddenFields = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>)</span>{
+				<span class="hljs-keyword">var</span> keyArray = [];
+				<span class="hljs-keyword">for</span>(key <span class="hljs-keyword">in</span> data){
+					keyArray.push(key);
+				}
+
+				<span class="hljs-keyword">var</span> setToTrueArray = {};
+				<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; keyArray.length; i++){
+					<span class="hljs-keyword">var</span> key = keyArray[i];
+					setToTrueArray[key] = <span class="hljs-literal">true</span>;
+				}
+
+				<span class="hljs-keyword">var</span> hiddenFields = scope.hiddenfields;
+				<span class="hljs-keyword">var</span> hiddenFieldsStructure = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">hiddenFieldData</span>)</span>{
+
+					<span class="hljs-keyword">for</span>(key <span class="hljs-keyword">in</span> hiddenFieldData){
+						<span class="hljs-keyword">if</span>(isArray(hiddenFieldData[key])){
+							<span class="hljs-keyword">var</span> array = hiddenFieldData[key];
+							<span class="hljs-keyword">if</span>(isObject(array[<span class="hljs-number">0</span>])){
+								<span class="hljs-keyword">if</span>(scope.compareKeys(array[<span class="hljs-number">0</span>], setToTrueArray)){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>MATCH! keys are matching, this is the array with hidden Colums config we need</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>									<span class="hljs-keyword">return</span> array[<span class="hljs-number">0</span>];
+								} <span class="hljs-keyword">else</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>NO MATCH! go to the next level and find match</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>									<span class="hljs-keyword">return</span> hiddenFieldsStructure(array[<span class="hljs-number">0</span>]);
+								}
+							}
+
+						}
+					}
+
+				}
+
+				<span class="hljs-keyword">var</span> hiddenFieldsStructureResult = hiddenFieldsStructure(hiddenFields[<span class="hljs-number">0</span>]);
+				<span class="hljs-keyword">return</span> hiddenFieldsStructureResult;
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <hr>
+<p>callback event, if cell got clicked</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.clickCell = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row, col, origin, clickedTable, event</span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>destroy all table paths,
+if table path is longer than actual clicked table index</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				scope.updateTablePath(clickedTable);
+
+				<span class="hljs-keyword">var</span> cellData = <span class="hljs-literal">null</span>;
+				<span class="hljs-keyword">if</span>(origin){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>clear tables if origin table is clicked</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					scope.cleanTables();
+					cellData = tablestructure[row][col];
+					curPath = [];
+
+					<span class="hljs-keyword">if</span>(cellData != <span class="hljs-literal">null</span>){
+						<span class="hljs-keyword">if</span>(isObject(cellData[<span class="hljs-number">0</span>]) || isArray(cellData)){
+							tableIsOrigin = <span class="hljs-literal">false</span>;
+						}
+					} <span class="hljs-keyword">else</span>{
+							tableIsOrigin = <span class="hljs-literal">true</span>;
+					}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>get current position of next generated table</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					scope.positionOfTable();
+
+				} <span class="hljs-keyword">else</span>{
+					<span class="hljs-keyword">var</span> actualTable = clickedTable;
+					<span class="hljs-keyword">var</span> tableDataArray = actualTable.getData();
+					cellData = tableDataArray[row][col];
+					tableIsOrigin = <span class="hljs-literal">false</span>;
+				}
+				<span class="hljs-keyword">if</span>(cellData != <span class="hljs-literal">null</span>){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>save cell paths on click</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">var</span> tableArrayLength = tableArray.length;
+					<span class="hljs-keyword">var</span> doubleTableArrayLength = tableArrayLength*<span class="hljs-number">2</span>;
+					curPath = curPath.slice(<span class="hljs-number">0</span>, doubleTableArrayLength);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>I AM AN ARRAY OF OBJECTS</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">if</span>(isObject(cellData[<span class="hljs-number">0</span>])){
+						curPath.push(row);
+						curPath.push(col);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>custom headers from json</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						<span class="hljs-keyword">var</span> headkeys = [];
+						<span class="hljs-keyword">var</span> renderers = [];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p>take care of Hidden Fields while creating new Tables
+<strong><strong><strong><em>**</em></strong></strong></strong> BEGIN</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						<span class="hljs-keyword">var</span> createhiddenFields = scope.returnSpecificHiddenFields(cellData[<span class="hljs-number">0</span>]);
+						<span class="hljs-keyword">var</span> helperHiddenFieldArray = [];
+						<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>;
+						globalFieldskipper = <span class="hljs-number">0</span>;
+						<span class="hljs-keyword">for</span>(key <span class="hljs-keyword">in</span> createhiddenFields){
+							<span class="hljs-keyword">if</span>(createhiddenFields[key] !== <span class="hljs-literal">false</span>){
+								helperHiddenFieldArray.push({data: i});
+							} <span class="hljs-keyword">else</span>{
+								globalFieldskipper++;
+							}
+							i++;
+						}
+
+						<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; helperHiddenFieldArray.length; i++){
+							renderers.push({data: helperHiddenFieldArray[i].data, renderer: coverRenderer});
+						}
+
+						<span class="hljs-keyword">var</span> helperArray = [];
+						<span class="hljs-keyword">for</span>(key <span class="hljs-keyword">in</span> cellData[<span class="hljs-number">0</span>]){
+							helperArray.push(key);
+						}
+						<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; helperHiddenFieldArray.length; i++){
+							headkeys.push(helperArray[helperHiddenFieldArray[i].data]);
+						}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p><strong><strong><strong><em>**</em></strong></strong></strong> END</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+						<span class="hljs-keyword">var</span> minsparerows = <span class="hljs-number">1</span>;
+						<span class="hljs-keyword">var</span> type = <span class="hljs-string">"object"</span>;
+						<span class="hljs-keyword">var</span> table = scope.createTable(headkeys, renderers, createhiddenFields, minsparerows, type);
+						<span class="hljs-keyword">var</span> parsedData = scope.parseObjectData(cellData);
+						table.loadData(parsedData);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p>I AM AN ARRAY</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(isArray(cellData)){
+
+						curPath.push(row);
+						curPath.push(col);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p>custom headers from json</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						<span class="hljs-keyword">var</span> headkeys = [];
+						<span class="hljs-keyword">var</span> renderers = [];
+
+						<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; cellData.length; i++){
+							headkeys.push(i);
+							renderers.push({renderer: coverRenderer});
+						}
+
+						<span class="hljs-keyword">var</span> array = [];
+						array.push(cellData);
+						<span class="hljs-keyword">var</span> minsparerows = <span class="hljs-number">0</span>;
+						<span class="hljs-keyword">var</span> type = <span class="hljs-string">"array"</span>;
+						<span class="hljs-keyword">var</span> table = scope.createTable(headkeys, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, minsparerows, type);
+						table.loadData(array);
+					} <span class="hljs-keyword">else</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <p>return;</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					}
+				} <span class="hljs-keyword">else</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <p>table can be edited and afterChange callback will be fired</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				}
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <p>checks if a is an array and returns true or false</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> isArray = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
+			    <span class="hljs-keyword">return</span> (!!a) &amp;&amp; (a.constructor === <span class="hljs-built_in">Array</span>);
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <p>checks if a is an object and returns true or false</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> isObject = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
+			    <span class="hljs-keyword">return</span> (!!a) &amp;&amp; (a.constructor === <span class="hljs-built_in">Object</span>);
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-53">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-53">&#182;</a>
+              </div>
+              <hr>
+<p>create initial Handsontable</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> hot = <span class="hljs-literal">null</span>;
+			scope.initFirstTable = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">allHeader</span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-54">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-54">&#182;</a>
+              </div>
+              <p>reset initial input tag</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				element[<span class="hljs-number">0</span>].innerHTML = <span class="hljs-string">''</span>;
+				<span class="hljs-keyword">var</span> placeholderArray = [[]];
+
+				hot = <span class="hljs-keyword">new</span> Handsontable(element[<span class="hljs-number">0</span>], {
+				  data: placeholderArray,
+				  minSpareRows: <span class="hljs-number">1</span>,
+				  rowHeaders: <span class="hljs-literal">false</span>,
+					colHeaders: headerarray,
+				  contextMenu: <span class="hljs-literal">true</span>,
+					columns: rendererArray,
+					afterChange: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">change, source</span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-55">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-55">&#182;</a>
+              </div>
+              <p>after Change Event - updates table and scope.data</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						scope.updateCurrentTable(change, source, hot);
+						scope.updateScopeData(hot, allHeader);
+					},
+					afterSelectionEnd: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row, col</span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-56">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-56">&#182;</a>
+              </div>
+              <p>fires after selected col got left</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						<span class="hljs-keyword">var</span> newCol = col + globalFieldskipper;
+						scope.clickCell(row, newCol, <span class="hljs-literal">true</span>);
+					},
+					afterRemoveRow: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-57">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-57">&#182;</a>
+              </div>
+              <p>fires if row gets removed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					},
+					afterCreateCol: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-58">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-58">&#182;</a>
+              </div>
+              <p>fires if col gets created</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					},
+					afterCreateRow: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-59">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-59">&#182;</a>
+              </div>
+              <p>fires if row gets created</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					}
+				});
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-60">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-60">&#182;</a>
+              </div>
+              <hr>
+<p>Icon Renderer</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">coverRenderer</span> (<span class="hljs-params">instance, td, row, col, prop, value, cellProperties</span>) </span>{
+				<span class="hljs-keyword">var</span> escaped = Handsontable.helper.stringify(value),
+				img,
+				displayDiv;
+
+				<span class="hljs-keyword">if</span> (isArray(value)) {
+					img = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'IMG'</span>);
+					img.style.width = <span class="hljs-string">"30px"</span>;
+
+					displayDiv = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'PRE'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-61">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-61">&#182;</a>
+              </div>
+              <p>styles</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					displayDiv.style.position = <span class="hljs-string">"absolute"</span>;
+					displayDiv.style.width = <span class="hljs-string">"300px"</span>;
+					displayDiv.style.background = <span class="hljs-string">"#ffffff"</span>;
+					displayDiv.style.color = <span class="hljs-string">"#aaa"</span>;
+					displayDiv.style.fontSize = <span class="hljs-string">"10px"</span>;
+					displayDiv.style.border = <span class="hljs-string">"1px solid #aaa"</span>;
+					displayDiv.style.padding = <span class="hljs-string">"5px"</span>;
+					displayDiv.style.display = <span class="hljs-string">"none"</span>;
+					displayDiv.style.zIndex = <span class="hljs-string">"32000"</span>;
+					displayDiv.id =<span class="hljs-string">"previewPre"</span>;
+
+					<span class="hljs-built_in">document</span>.body.appendChild(displayDiv);
+
+					Handsontable.Dom.addEvent(img, <span class="hljs-string">'mousedown'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">e</span>)</span>{
+						e.preventDefault(); <span class="hljs-comment">// prevent selection quirk</span>
+					});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-62">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-62">&#182;</a>
+              </div>
+              <p>mouseenter event for display preview of structure</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					Handsontable.Dom.addEvent(img, <span class="hljs-string">'mouseenter'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">e</span>)</span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-63">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-63">&#182;</a>
+              </div>
+              <p>div position</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						displayDiv.style.left = e.pageX + <span class="hljs-string">"px"</span>;
+						displayDiv.style.top = e.pageY + <span class="hljs-string">"px"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-64">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-64">&#182;</a>
+              </div>
+              <p>insert values</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						displayDiv.innerHTML = <span class="hljs-built_in">JSON</span>.stringify(value, <span class="hljs-literal">undefined</span>, <span class="hljs-number">2</span>);
+						displayDiv.style.display = <span class="hljs-string">"block"</span>;
+					});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-65">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-65">&#182;</a>
+              </div>
+              <p>fires on mouseleave of current displayed preview table element</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					Handsontable.Dom.addEvent(img, <span class="hljs-string">'mouseleave'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">e</span>)</span>{
+						displayDiv.style.display = <span class="hljs-string">"none"</span>;
+					});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-66">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-66">&#182;</a>
+              </div>
+              <p>checks if value of cell is object or an array and display right symbol</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">if</span>(isObject(value[<span class="hljs-number">0</span>])){
+						img.src = <span class="hljs-string">"images/object.png"</span>;
+					} <span class="hljs-keyword">else</span>{
+						img.src = <span class="hljs-string">"images/array.png"</span>;
+					}
+
+					Handsontable.Dom.empty(td);
+					td.appendChild(img);
+
+				} <span class="hljs-keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-67">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-67">&#182;</a>
+              </div>
+              <p>render as text, if it’s whether an array nor an object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					Handsontable.renderers.TextRenderer.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+				}
+
+				<span class="hljs-keyword">return</span> td;
+			}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-68">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-68">&#182;</a>
+              </div>
+              <hr>
+<p>parse the input structure for hidden columns</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.parseHiddenFields = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fields</span>)</span>{
+
+				<span class="hljs-keyword">var</span> generateHiddenStructure = [];
+				<span class="hljs-keyword">var</span> hiddenStructure = fields[<span class="hljs-number">0</span>];
+				<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>;
+				globalFieldskipper = <span class="hljs-number">0</span>;
+				<span class="hljs-keyword">for</span>(key <span class="hljs-keyword">in</span> hiddenStructure){
+					<span class="hljs-keyword">if</span>(hiddenStructure[key] != <span class="hljs-literal">false</span>){
+						generateHiddenStructure.push({data: i});
+					} <span class="hljs-keyword">else</span>{
+						globalFieldskipper++;
+					}
+					i++;
+				}
+				<span class="hljs-keyword">return</span> generateHiddenStructure;
+			};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-69">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-69">&#182;</a>
+              </div>
+              <hr>
+<p>watches changes on scope.data of directive</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> first = <span class="hljs-literal">true</span>;
+			scope.$watch(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">newValue, oldValue</span>) </span>{
+					<span class="hljs-keyword">if</span> (newValue){
+						<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"I can see new data"</span>);
+						<span class="hljs-keyword">if</span>(newValue[<span class="hljs-number">0</span>] !== <span class="hljs-literal">undefined</span> &amp;&amp; newValue[<span class="hljs-number">0</span>] !== <span class="hljs-literal">null</span>){
+							<span class="hljs-keyword">if</span>(first){
+								first = <span class="hljs-literal">false</span>;
+								<span class="hljs-keyword">var</span> hiddenCols = scope.parseHiddenFields(scope.hiddenfields);
+								scope.initialHeaderSettings(newValue, hiddenCols);
+								<span class="hljs-keyword">var</span> allHiddenCols = scope.hiddenfields[<span class="hljs-number">0</span>];
+								scope.initFirstTable(allHiddenCols);
+								scope.updateTableData(newValue, hot);
+							} <span class="hljs-keyword">else</span>{
+								scope.updateTableData(newValue, hot);
+							}
+						}
+					}
+			}, <span class="hljs-literal">true</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-70">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-70">&#182;</a>
+              </div>
+              <hr>
+<p>watches changes on scope.hiddenfields of directive
+*not needed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			scope.$watch(<span class="hljs-string">'hiddenfields'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">newValue, oldValue</span>)</span>{
+
+			}, <span class="hljs-literal">true</span>);
+
+		}
+	};
+}]);</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
