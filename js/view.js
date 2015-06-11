@@ -1,6 +1,6 @@
 /* using handson.full.js */
 /* easier approach to wrap this */
-expHandsonTable.directive('handsonfullDirective', ['$timeout', function ($timeout){
+expHandsonTable.directive('handsonfullDirective', function (){
 	return {
 		restrict : 'EA',
 		transclude : false,
@@ -710,4 +710,4 @@ expHandsonTable.directive('handsonfullDirective', ['$timeout', function ($timeou
 
 		}
 	};
-}]);
+});
