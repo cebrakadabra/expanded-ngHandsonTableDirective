@@ -109,7 +109,6 @@ expHandsonTable.directive('handsonfullDirective', function (){
 					var newVal = change[0][3];
 					var row = change[0][0];
 					var col = change[0][1];
-					// curTableDataArray[row][col] = newVal;
 
 					if(isArray(change[0])){
 						if(newVal.charAt(0) == "["){
@@ -137,7 +136,7 @@ expHandsonTable.directive('handsonfullDirective', function (){
 
 
 // ******************
-			// updates the scope data, if modifications in the table are made
+			// updates the scope data, if modifications in the table are made (up to 6 levels deep)
 			scope.updateScopeData = function(table, allheader){
 				if(table != null){
 
@@ -516,7 +515,7 @@ expHandsonTable.directive('handsonfullDirective', function (){
 						var parsedData = scope.parseObjectData(cellData);
 						table.loadData(parsedData);
 
-						// I AM AN ARRAY
+						// I am an array
 					} else if(isArray(cellData)){
 
 						curPath.push(row);
